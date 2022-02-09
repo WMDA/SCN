@@ -1,5 +1,5 @@
 '''
-Functions used to create graphs and statistical measures from created graphs.
+Functions used to create graphs and generate statistical measures from created graphs.
 '''
 
 import numpy as np
@@ -52,14 +52,14 @@ def create_graphs(data, names, centroids, threshold=10):
     Wrapper around multiple scona functions.  
 
     Parameters
-    --------------------------------------------
+    -----------------------------------------------------
     data: pandas dataframe object with the data for graph.
     names: list object. Names of brain regions.
     centroids. Numpy array. Co-ordinates for names (x,y,z)
     threshold: int, optional. Level to threshold the graph at.
 
     Returns
-    ------------------------------------------------
+    -------------------------------------------------------------------
     results: dict object. Dictionary of corr_matrix (correlation matrix),
              graph (graph unthresholded) and graph_threshold (thresholded graph)      
     '''
@@ -86,16 +86,16 @@ def directories(name, data_path):
     then creates a new directory.
 
     Parameters
-    ---------------
+    ---------------------------------------
     name: str, name of directory
     perms: int, number of permuations used.
     data_path: str, 
 
     Returns
-    --------------
+    -----------------------------------------
     boolean: Retruns True if directory exists. 
-             Returns False if directory doesn't exist
-             and makes the directory.
+             Returns False if directory doesn't 
+             exist and makes the directory.
 
     '''
 
@@ -109,24 +109,24 @@ def directories(name, data_path):
     else:
         return True
 
-
-def permuations(thresholded_graph, data_path, name='graph', perms=1000, overwrite=False):
+def permutations(thresholded_graph, data_path, name='graph', perms=1000, overwrite=False):
     
     '''
-    Function to simulate random graphs for checking that actual graphs differs 
-    from the random graphs. Saves results as a csv to directory save time for 
-    furthur analysis.
+    Function to simulate random graphs for checking that actual graphs 
+    differs from the random graphs. Will also create a directory with 
+    csvs if one doesn't exist.
+    
 
     Parameters
-    --------------------
+    --------------------------------------------------
     thresholded_graph: scona thresholded graph object.
-    data_path: str, path to 
-    name: optional str, 
+    data_path: str, path to directory where to save results.
+    name: optional str, Name of graph object
     perms: int, number of permutations
     overwrite: optional Boolean, 
 
     Returns
-    --------------------
+    --------------------------------------------------
     results: dict, pandas dataframe of global measures
              and rich club.
 
@@ -151,7 +151,8 @@ def permuations(thresholded_graph, data_path, name='graph', perms=1000, overwrit
             global_measures = pd.read_csv(f'{path}/global_measures.csv')
         
         except Exception:
-            print(Fore.RED + 'Unable to read in csvs. Please check that data exists in the directory. If data does not exist then use overwrite=True' + Fore.RESET)
+            print(Fore.RED + 'Unable to read in csvs. Please check that data exists in the directory. If data does not exist then use overwrite=True' 
+                  + Fore.RESET)
             sys.exit(1)
 
     results = {
