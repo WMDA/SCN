@@ -127,8 +127,8 @@ def permutations(thresholded_graph, data_path, name='graph', perms=1000, overwri
 
     Returns
     --------------------------------------------------
-    results: dict, pandas dataframe of global measures
-             and rich club.
+    results: dict, pandas dataframe of global measures, 
+             rich club and small world properties.
 
     '''
 
@@ -139,14 +139,19 @@ def permutations(thresholded_graph, data_path, name='graph', perms=1000, overwri
     if directory_exist == False or overwrite == True:        
         brain_bundle = scn.GraphBundle([thresholded_graph], [f'{name}_thresholded'])
         brain_bundle.create_random_graphs(f'{name}_thresholded', perms)
+        
         global_measures = brain_bundle.report_global_measures()
         rich_club = brain_bundle.report_rich_club()
+
+        small_world = brain_bundle.report_small_world(f'{name}_thresholded')
+        small_word_df = pd.DataFrame.from_dict(small_world, orient='index', columns=['small_world_coefficient'])
 
         if save == True:
         
             try:
                 rich_club.to_csv(f'{path}/rich_club.csv')
                 global_measures.to_csv(f'{path}/global_measures.csv')
+                small_word_df.to_csv(f'{path}/small_world.csv')
         
             except Exception:
                 print(Fore.RED + 'Unable to save CSV files.' + Fore.RESET) 
@@ -157,7 +162,8 @@ def permutations(thresholded_graph, data_path, name='graph', perms=1000, overwri
             print("Loading CSVs")
             rich_club = pd.read_csv(f'{path}/rich_club.csv')
             global_measures = pd.read_csv(f'{path}/global_measures.csv')
-        
+            small_world_df = pd.read_csv(f'{path}/small_world.csv')
+
         except Exception:
             print(Fore.RED + 'Unable to read in csvs. Please check that data exists in the directory. If data does not exist then use overwrite=True' 
                   + Fore.RESET)
@@ -166,8 +172,11 @@ def permutations(thresholded_graph, data_path, name='graph', perms=1000, overwri
     results = {
 
         'global_measures' : global_measures,
-        'rich_club' : rich_club
+        'rich_club' : rich_club,
+        'small_world' : small_word_df
 
     }
 
     return results
+
+
