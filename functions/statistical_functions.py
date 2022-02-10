@@ -109,7 +109,7 @@ def directories(name, data_path):
     else:
         return True
 
-def permutations(thresholded_graph, data_path, name='graph', perms=1000, overwrite=False):
+def permutations(thresholded_graph, data_path, name='graph', perms=1000, overwrite=False, save=True):
     
     '''
     Function to simulate random graphs for checking that actual graphs 
@@ -140,11 +140,19 @@ def permutations(thresholded_graph, data_path, name='graph', perms=1000, overwri
         brain_bundle = scn.GraphBundle([thresholded_graph], [f'{name}_thresholded'])
         brain_bundle.create_random_graphs(f'{name}_thresholded', perms)
         global_measures = brain_bundle.report_global_measures()
-        global_measures.to_csv(f'{path}/global_measures.csv')
         rich_club = brain_bundle.report_rich_club()
-        rich_club.to_csv(f'{path}/rich_club.csv')
+
+        if save == True:
+        
+            try:
+                rich_club.to_csv(f'{path}/rich_club.csv')
+                global_measures.to_csv(f'{path}/global_measures.csv')
+        
+            except Exception:
+                print(Fore.RED + 'Unable to save CSV files.' + Fore.RESET) 
 
     else:
+
         try:
             print("Loading CSVs")
             rich_club = pd.read_csv(f'{path}/rich_club.csv')
