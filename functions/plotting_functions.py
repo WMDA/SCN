@@ -4,26 +4,29 @@ Functions to plot graph measures
 
 #External modules
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
 sns.set_style('dark')
 
 #SCN modules
 import functions.statistical_functions as Sfun
 
-def distro_plots(data):
+def distro_plots(data:pd.DataFrame) -> None:
     
     '''
     Wrapper function around sns.histplots to plot the distibution of clustering, 
-    shortest_path, assortativity, modularity and efficiency.
+    shortest_path, assortativity, modularity and efficiency. 
+    Plots are 5x1 grid of histplots for clustering, shortest_path, assortativity,
+    modularity and efficiency
 
     Parameters
-    ------------------------------------------------------------------------------
+    ----------
     data: pandas df from the output of report_global_measures() from scona package
 
     Returns
-    -------------------------------------------------------------------------
-    plots: 5x1 grid of histplots for clustering, shortest_path, assortativity,
-           modularity and efficiency
+    -------
+    None
+
     '''
 
     fig, ax = plt.subplots(1,5, figsize=(35,8))
@@ -35,7 +38,7 @@ def distro_plots(data):
     plt.show()
 
 
-def pval_plotting(ctvalues, tcrit_value, measure, permutations):
+def pval_plotting(ctvalues:list, tcrit_value:int, measure:str, permutations:int) -> None:
     
     '''
     Wrapper around seaborn displot.

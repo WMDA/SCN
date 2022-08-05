@@ -26,17 +26,17 @@ class Timer:
     timer.stop()
     '''
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.__start = None
 
-    def start(self):
+    def start(self) -> None:
         
         if self.__start is not None:
             raise TimeError("Timer is already started")
 
         self.__start = time.perf_counter()
 
-    def stop(self):
+    def stop(self) -> None:
         
         if self.__start is None:
             raise TimeError("Timer has not been started. Use .start() to start timer")
@@ -51,7 +51,7 @@ class Timer:
         else:
             print(f"Finished in {time_taken} seconds")
 
-def load_data(measure, data):
+def load_data(measure:str, data:str) -> dict:
 
     '''
     Function to load data. 

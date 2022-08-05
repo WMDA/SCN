@@ -9,7 +9,7 @@ import multiprocessing
 import os
 from decouple import config
 
-def options():
+def options() -> dict:
     
     '''
     Function to set command line options. 
@@ -36,7 +36,7 @@ def options():
 
     return flags
 
-def arguments():
+def arguments() -> dict:
 
     '''
     Function to clean up arguments.
@@ -89,7 +89,7 @@ def arguments():
 
     return results
 
-if __name__=='__main__':
+if __name__ == '__main__':
     
     from functions.utils import Timer
     import sys
@@ -164,4 +164,3 @@ if __name__=='__main__':
     
     time.stop()
     sys.stdout.close()
-    args = arguments()

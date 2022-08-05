@@ -9,7 +9,7 @@ import sys
 import pandas as pd
 from colorama import Fore
 
-def mean_std(values):
+def mean_std(values:list) -> dict:
    
     '''
     Function to calculate mean and standard deviation.
@@ -45,7 +45,7 @@ def mean_std(values):
     return results
 
 
-def create_graphs(data, names, centroids, threshold=10):
+def create_graphs(data:pd.DataFrame, names:list, centroids:np.float64, threshold:int=10) -> dict:
     
     '''
     Function to create a correlation matrix, graph and thresholded graph.
@@ -79,7 +79,7 @@ def create_graphs(data, names, centroids, threshold=10):
 
     return results
 
-def directories(name, data_path):
+def directories(name:str, data_path:str) -> bool:
     
     '''
     Function to check if a directory exists. If directory doesn't exist 
@@ -88,8 +88,7 @@ def directories(name, data_path):
     Parameters
     ---------------------------------------
     name: str, name of directory
-    perms: int, number of permuations used.
-    data_path: str, 
+    data_path: str, path to directory
 
     Returns
     -----------------------------------------
@@ -109,7 +108,8 @@ def directories(name, data_path):
     else:
         return True
 
-def permutations(thresholded_graph, data_path, name='graph', perms=1000, overwrite=False, save=True):
+def permutations(thresholded_graph:scn.BrainNetwork, data_path:str, name:str='graph', 
+                 perms:int=1000, overwrite:bool=False, save:bool=True) -> dict:
     
     '''
     Function to simulate random graphs for checking that actual graphs 
@@ -144,14 +144,14 @@ def permutations(thresholded_graph, data_path, name='graph', perms=1000, overwri
         rich_club = brain_bundle.report_rich_club()
 
         small_world = brain_bundle.report_small_world(f'{name}_thresholded')
-        small_word_df = pd.DataFrame.from_dict(small_world, orient='index', columns=['small_world_coefficient'])
+        small_world_df = pd.DataFrame.from_dict(small_world, orient='index', columns=['small_world_coefficient'])
 
         if save == True:
         
             try:
                 rich_club.to_csv(f'{path}/rich_club.csv')
                 global_measures.to_csv(f'{path}/global_measures.csv')
-                small_word_df.to_csv(f'{path}/small_world.csv')
+                small_world_df.to_csv(f'{path}/small_world.csv')
         
             except Exception:
                 print(Fore.RED + 'Unable to save CSV files.' + Fore.RESET) 
@@ -160,9 +160,10 @@ def permutations(thresholded_graph, data_path, name='graph', perms=1000, overwri
 
         try:
             print("Loading CSVs")
-            rich_club = pd.read_csv(f'{path}/rich_club.csv')
-            global_measures = pd.read_csv(f'{path}/global_measures.csv')
-            small_world_df = pd.read_csv(f'{path}/small_world.csv')
+            rich_club = pd.read_csv(f'{path}/rich_club.csv').set_index('Unnamed: 0')
+            global_measures = pd.read_csv(f'{path}/global_measures.csv').set_index('Unnamed: 0')
+            small_world_df = pd.read_csv(f'{path}/small_world.csv').set_index('Unnamed: 0')
+
 
         except Exception:
             print(Fore.RED + 'Unable to read in csvs. Please check that data exists in the directory. If data does not exist then use overwrite=True' 
@@ -170,10 +171,10 @@ def permutations(thresholded_graph, data_path, name='graph', perms=1000, overwri
             sys.exit(1)
 
     results = {
-
+        'small_world' : small_world_df,
         'global_measures' : global_measures,
         'rich_club' : rich_club,
-        'small_world' : small_word_df
+        
 
     }
 
