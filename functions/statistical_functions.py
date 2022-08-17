@@ -179,5 +179,3 @@ def permutations(thresholded_graph:scn.BrainNetwork, data_path:str, name:str='gr
     }
 
     return results
-
-

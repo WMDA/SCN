@@ -83,7 +83,7 @@ def df_for_sns_barplot(measures, original_network) -> pd.DataFrame:
     return NewDataFrame
 
 
-def network_measures_plot(brain_bundle, original_network, color:str=None, ci:int=95, show_legend:bool=True):
+def network_measures_plot(brain_bundle, original_network, color:str=None, ci:int=95, show_legend:bool=True) -> None:
     """
     Modified scona function plot_network_measures. See original for full documentation.
     Main difference is it calls df_for_sns_barplot rather than create_df_sns_barplot
@@ -120,7 +120,7 @@ def network_measures_plot(brain_bundle, original_network, color:str=None, ci:int
     plt.tight_layout()
     plt.show()
 
-def rich_club_plot(brain_bundle, original_network, color=None, show_legend=True, x_max=None, y_max=None):
+def rich_club_plot(brain_bundle, original_network, color=None, show_legend=True, x_max=None, y_max=None) -> None:
 
     '''
     Modified scona function plot_rich_club. See original function for full details.
