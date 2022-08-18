@@ -45,7 +45,7 @@ def mean_std(values:list) -> dict:
     return results
 
 
-def create_graphs(data:pd.DataFrame, names:list, centroids:np.float64, threshold:int=10) -> dict:
+def create_graphs(data:pd.DataFrame, names:list, centroids:np.float64, threshold:int) -> dict:
     
     '''
     Function to create a correlation matrix, graph and thresholded graph.
@@ -108,8 +108,7 @@ def directories(name:str, data_path:str) -> bool:
     else:
         return True
 
-def permutations(thresholded_graph:scn.BrainNetwork, data_path:str, name:str='graph', 
-                 perms:int=1000, overwrite:bool=False, save:bool=True) -> dict:
+def permutations(thresholded_graph:scn.BrainNetwork, data_path:str, perms:int, name:str='graph',  overwrite:bool=False, save:bool=True) -> dict:
     
     '''
     Function to simulate random graphs for checking that actual graphs 
