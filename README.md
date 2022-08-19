@@ -1,2 +1,3 @@
 # SCN
-Repo for structural covariance network paper
+
+This branch contains all the tutorial notebooks used in building this repo.
