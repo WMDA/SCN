@@ -1,7 +1,6 @@
 git+https://github.com/WhitakerLab/scona.git#egg=scona
 matplotlib==3.4.2
 networkx==2.6.3
-nilearn==0.8.0
 numpy==1.19.5
 pandas==1.2.4
 seaborn==0.11.2
