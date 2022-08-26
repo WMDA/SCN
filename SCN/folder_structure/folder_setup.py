@@ -5,6 +5,18 @@ import re
 
 
 def set_arguments() -> dict:
+    
+    '''
+    Function to set arguments in case script wants to be run as a standlone
+
+    Parameters
+    ---------
+    None
+
+    Returns
+    -------
+    args:dict of arguments. Run script with -h for further info
+    '''
 
     option = argparse.ArgumentParser()
     option.add_argument("-p", "--path", dest='path',
@@ -16,6 +28,15 @@ def set_arguments() -> dict:
 
 
 def folder_creation(file_path: str, name: str = 'SCN') -> None:
+
+    '''
+    Function to make folders. 
+
+    Parameters
+    ----------
+    file_path:str of absolute path file to where scn should set up
+    name:str optional name of directory. If left blank then name is SCN
+    '''
 
     try:
         os.mkdir(f'{file_path}/{name}')
@@ -29,7 +50,20 @@ def folder_creation(file_path: str, name: str = 'SCN') -> None:
         print("Do not have the write permissions to create a folder in this directory. Either change file path or the directory's permssions")
         sys.exit(1)
 
-def update_env(file_path: str, name: str):
+def update_env(file_path: str, name: str) -> None:
+
+    '''
+    Function to create/update .env file which is used by scn to keep track of directories.
+
+    Parameters
+    ----------
+    file_path:str of absolute path file to where scn should set up
+    name:str optional name of directory. If left blank then name is SCN
+
+    Returns
+    -------
+    None
+    '''
     
     env_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),'.env')
     if name == None:
@@ -61,8 +95,20 @@ def update_env(file_path: str, name: str):
         env.write(f'root={file_path}/{name}')
         env.close()
 
-
 def setup(file_path: str, name: str) -> None:
+
+    '''
+    Wrapper around directory set up script. Also function to assertain if directory already exists.
+    
+    Parameters
+    ----------
+    file_path:str of absolute path file to where scn should set up
+    name:str optional name of directory. If left blank then name is SCN
+
+    Returns
+    -------
+    None
+    '''
 
     if name == None:
         name = 'SCN'
