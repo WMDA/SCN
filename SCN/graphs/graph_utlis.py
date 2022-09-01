@@ -3,7 +3,20 @@ import os
 from decouple import config
 
 
-def save_pickle(name: str, object_to_pickle) -> None:
+def save_pickle(name: str, object_to_pickle: object) -> None:
+
+    '''
+    Function to save an object as pickle file in the work/pickle directory.
+
+    Parameters
+    ----------
+    name:str of name of file.
+    object_to_pickle: object to save as pickle file
+
+    Returns
+    -------
+    None
+    '''
 
     pickle_path = os.path.join(config('root'), 'work/pickle')
 
@@ -12,6 +25,19 @@ def save_pickle(name: str, object_to_pickle) -> None:
 
 
 def load_pickle(name_of_pickle_object: str) -> object:
+
+    '''
+    Function to load pickle object in the work/pickle directory.
+
+    Parameters
+    ----------
+    name_of_pickle_object: str name of object to be loaded. 
+                           Doesn't need extension
+
+    Returns
+    -------
+    unpickled obect
+    '''
 
     pickle_path = os.path.join(config('root'), 'work/pickle')
 
