@@ -5,16 +5,15 @@ class Random_Graph_Creator:
     def __init__(self) -> None:
         pass
 
-    def data(self, *kargs):
-        
-        self.group_1 = kargs[0]
-        self.group_2 = kargs[1]
+    def data(self, *kargs) -> dict:
 
-        try:
-            self.group_3 = kargs[2]
+        return dict(zip([f'group_{key}'for key in range(len(kargs))], [group for group in kargs]))
 
-        except Exception:
-            pass
+    #def permutations(self):
+
+
+
+
 
     
 
