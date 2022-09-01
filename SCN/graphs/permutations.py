@@ -1,43 +1,40 @@
 from SCN.folder_structure.folder_utlis import check_path
 from SCN.graphs.graph_utlis import load_pickle, save_pickle
 
-import numpy as np
+import os
 import scona as scn
 import pandas as pd
+from decouple import config
 
 
-def random_graphs(thresholded_graph:scn.BrainNetwork, perms:int, name:str='graph') -> dict:
-        
-        brain_bundle = scn.GraphBundle([thresholded_graph], [f'{name}_thresholded'])
-        brain_bundle.create_random_graphs(f'{name}_thresholded', perms)
-        
-        global_measures = brain_bundle.report_global_measures()
-        rich_club = brain_bundle.report_rich_club()
+def perm_path():
+    '''
+    Function to get permuation pickle file location
 
-        small_world = brain_bundle.report_small_world(f'{name}_thresholded')
-        small_world_df = pd.DataFrame.from_dict(small_world, orient='index', columns=['small_world_coefficient'])
-        
-        return {
-            'small_world' : small_world_df,
-            'global_measures' : global_measures,
-            'rich_club' : rich_club,
-        }
+    Parameters
+    ----------
+    None
 
-def random_graph_permutations(thresholded_graph:scn.BrainNetwork, data_path:str, perms:int, name:str='graph') -> dict:
-    
+    Returns
+    -------
+    file path: str to permutation pickle file
+    '''
+
+    return os.path.join(config('root'), 'work/pickle')
+
+
+def random_graphs(thresholded_graph: scn.BrainNetwork, perms: int, name: str = 'graph') -> dict:
     '''
     Function to simulate random graphs for checking that actual graphs 
-    differs from the random graphs. Will also create a directory with 
-    csvs if one doesn't exist.
-    
+    differs from the random graphs. 
 
     Parameters
     --------------------------------------------------
     thresholded_graph: scona thresholded graph object.
-    data_path: str, path to directory where to save results.
-    name: optional str, Name of graph object
     perms: int, number of permutations
-    overwrite: optional Boolean, 
+    name: optional str, Name of graph object
+
+
 
     Returns
     --------------------------------------------------
@@ -46,26 +43,60 @@ def random_graph_permutations(thresholded_graph:scn.BrainNetwork, data_path:str,
 
     '''
 
-    folder_name = f'{name}_{perms}'
-    directory_exist = check_path(data_path)
+    brain_bundle = scn.GraphBundle(
+        [thresholded_graph], [f'{name}_thresholded'])
+    brain_bundle.create_random_graphs(f'{name}_thresholded', perms)
 
-    if directory_exist == False:        
+    global_measures = brain_bundle.report_global_measures()
+    rich_club = brain_bundle.report_rich_club()
+    small_world = brain_bundle.report_small_world(f'{name}_thresholded')
+    small_world_df = pd.DataFrame.from_dict(
+        small_world, orient='index', columns=['small_world_coefficient'])
+
+    return {
+        'small_world': small_world_df,
+        'global_measures': global_measures,
+        'rich_club': rich_club,
+    }
+
+
+def random_graph_permutations(thresholded_graph: scn.BrainNetwork, perms: int, name: str = 'graph') -> dict:
+    '''
+    Function wrapper around random_graphs function. Will pickle results for later use in work/pickle.
+    Will load pickle file if exists. 
+
+    Parameters
+    --------------------------------------------------
+    thresholded_graph: scona thresholded graph object.
+    perms: int, number of permutations
+    name: optional str, Name of graph object
+
+    Returns
+    --------------------------------------------------
+    results: dict, pandas dataframe of global measures, 
+             rich club and small world properties.
+
+    '''
+
+    pickle_file = f'{name}_{perms}'
+    data_path = perm_path()
+    file_exist = check_path(os.path.join(data_path, f'{pickle_file}.pickle'))
+
+    if file_exist == False:
 
         results = random_graphs(thresholded_graph, perms, name)
-        save_pickle(folder_name, results)
+        save_pickle(pickle_file, results)
 
-    if directory_exist == True:
+    if file_exist == True:
 
         try:
-            results = load_pickle(folder_name)
+            results = load_pickle(pickle_file)
+            print('\nLoaded previous permutation file\n')
 
-            if results == None:
-                raise FileExistsError
-        
-        except FileExistsError:
-            
-            print('\nPermutating through graphs')
+        except Exception:
+
+            print('\nError while loading pickle file. Permutating now\n')
             results = random_graphs(thresholded_graph, perms, name)
-            save_pickle(folder_name, results)
-    
+            save_pickle(pickle_file, results)
+
     return results

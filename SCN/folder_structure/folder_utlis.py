@@ -1,7 +1,5 @@
 import os
 
-
-
 def check_path(data_path:str) -> bool:
     
     '''
