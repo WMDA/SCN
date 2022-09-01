@@ -29,7 +29,7 @@ def random_graphs(thresholded_graph: scn.BrainNetwork, perms: int, name: str = '
     differs from the random graphs. 
 
     Parameters
-    --------------------------------------------------
+    -----------
     thresholded_graph: scona thresholded graph object.
     perms: int, number of permutations
     name: optional str, Name of graph object
@@ -37,7 +37,7 @@ def random_graphs(thresholded_graph: scn.BrainNetwork, perms: int, name: str = '
 
 
     Returns
-    --------------------------------------------------
+    ---------
     results: dict, pandas dataframe of global measures, 
              rich club and small world properties.
 

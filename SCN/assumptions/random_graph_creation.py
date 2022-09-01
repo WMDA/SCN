@@ -1,37 +1,37 @@
+# SCN imports
 import SCN.graphs.permutations as perms
 
+# Base python imports
 import multiprocessing
+
 
 class Random_Graph_Creator:
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, perms: int, name:str='graph') -> None:
+        
+        self.perms = perms
+        self.name = name
 
-    def data(self, *data) -> dict:
-
+    def data(self, *data) -> None:
         '''
-        Function to read in data
+        Method to read in data
 
         Parameters
         ----------
-        *data data in the f
-
-        Returns
-        -------
-        dict of data 
+        *data: thresholded graphs 
         '''
 
-        return dict(zip([f'group_{data}'for key in range(len(data))], [group for group in data]))
+        self.data = dict(zip([f'group_{key}'for key in range(len(data))], [group for group in data]))
+        self.groups = len(self.data.keys())
 
-    #def permutations(self):
-
-
-
-
-
+    def muti_processing_permutations(self, key):
+        
+        print(f'\nCreating Random graph for {key}\n')
+        graph_threshold = self.data[key]
+        perms.random_graph_permutations(graph_threshold, self.perms, key)
     
+    def permutations(self):
 
-
-
-
+        with multiprocessing.Pool(self.groups) as func:
+            func.map(self.muti_processing_permutations, self.data.keys())
         
