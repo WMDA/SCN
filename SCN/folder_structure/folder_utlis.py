@@ -2,31 +2,26 @@ import os
 
 
 
-def check_directories(name:str, data_path:str) -> bool:
+def check_path(data_path:str) -> bool:
     
     '''
-    Function to check if a directory exists. If directory doesn't exist 
-    then creates a new directory.
+    Function to check if a directory exists.
 
     Parameters
     ---------------------------------------
-    name: str, name of directory
     data_path: str, path to directory
 
     Returns
     -----------------------------------------
     boolean: Retruns True if directory exists. 
              Returns False if directory doesn't 
-             exist and makes the directory.
+             exist 
 
     '''
 
-    dirs = os.listdir(data_path)
-
-    if name not in dirs:        
-        path = os.path.join(data_path, name)
-        os.mkdir(path)
-        return False
-    
-    else:
+    try:
+        assert os.path.exists(data_path)
         return True
+
+    except AssertionError:
+        return False 

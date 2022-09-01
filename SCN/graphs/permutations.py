@@ -1,14 +1,29 @@
-from SCN.folder_structure.folder_utlis import check_directories
+from SCN.folder_structure.folder_utlis import check_path
+from SCN.graphs.graph_utlis import load_pickle, save_pickle
 
 import numpy as np
 import scona as scn
-import os
-import sys
 import pandas as pd
-from colorama import Fore
 
 
-def random_graph_permutations(thresholded_graph:scn.BrainNetwork, data_path:str, perms:int, name:str='graph',  overwrite:bool=False, save:bool=True) -> dict:
+def random_graphs(thresholded_graph:scn.BrainNetwork, perms:int, name:str='graph') -> dict:
+        
+        brain_bundle = scn.GraphBundle([thresholded_graph], [f'{name}_thresholded'])
+        brain_bundle.create_random_graphs(f'{name}_thresholded', perms)
+        
+        global_measures = brain_bundle.report_global_measures()
+        rich_club = brain_bundle.report_rich_club()
+
+        small_world = brain_bundle.report_small_world(f'{name}_thresholded')
+        small_world_df = pd.DataFrame.from_dict(small_world, orient='index', columns=['small_world_coefficient'])
+        
+        return {
+            'small_world' : small_world_df,
+            'global_measures' : global_measures,
+            'rich_club' : rich_club,
+        }
+
+def random_graph_permutations(thresholded_graph:scn.BrainNetwork, data_path:str, perms:int, name:str='graph') -> dict:
     
     '''
     Function to simulate random graphs for checking that actual graphs 
@@ -32,49 +47,25 @@ def random_graph_permutations(thresholded_graph:scn.BrainNetwork, data_path:str,
     '''
 
     folder_name = f'{name}_{perms}'
-    directory_exist = check_directories(folder_name, data_path)
-    path = os.path.join(data_path, folder_name)
+    directory_exist = check_path(data_path)
 
-    if directory_exist == False or overwrite == True:        
-        brain_bundle = scn.GraphBundle([thresholded_graph], [f'{name}_thresholded'])
-        brain_bundle.create_random_graphs(f'{name}_thresholded', perms)
-        
-        global_measures = brain_bundle.report_global_measures()
-        rich_club = brain_bundle.report_rich_club()
+    if directory_exist == False:        
 
-        small_world = brain_bundle.report_small_world(f'{name}_thresholded')
-        small_world_df = pd.DataFrame.from_dict(small_world, orient='index', columns=['small_world_coefficient'])
+        results = random_graphs(thresholded_graph, perms, name)
+        save_pickle(folder_name, results)
 
-        if save == True:
-        
-            try:
-                rich_club.to_csv(f'{path}/rich_club.csv')
-                global_measures.to_csv(f'{path}/global_measures.csv')
-                small_world_df.to_csv(f'{path}/small_world.csv')
-        
-            except Exception:
-                print(Fore.RED + 'Unable to save CSV files.' + Fore.RESET) 
-
-    else:
+    if directory_exist == True:
 
         try:
-            print("Loading CSVs")
-            rich_club = pd.read_csv(f'{path}/rich_club.csv').set_index('Unnamed: 0')
-            global_measures = pd.read_csv(f'{path}/global_measures.csv').set_index('Unnamed: 0')
-            small_world_df = pd.read_csv(f'{path}/small_world.csv').set_index('Unnamed: 0')
+            results = load_pickle(folder_name)
 
-
-        except Exception:
-            print(Fore.RED + 'Unable to read in csvs. Please check that data exists in the directory. If data does not exist then use overwrite=True' 
-                  + Fore.RESET)
-            sys.exit(1)
-
-    results = {
-        'small_world' : small_world_df,
-        'global_measures' : global_measures,
-        'rich_club' : rich_club,
+            if results == None:
+                raise FileExistsError
         
-
-    }
-
+        except FileExistsError:
+            
+            print('\nPermutating through graphs')
+            results = random_graphs(thresholded_graph, perms, name)
+            save_pickle(folder_name, results)
+    
     return results
