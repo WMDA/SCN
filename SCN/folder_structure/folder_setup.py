@@ -42,11 +42,15 @@ def folder_creation(file_path: str, name: str = 'SCN') -> None:
         os.mkdir(f'{file_path}/{name}')
         os.mkdir(f'{file_path}/{name}/logs')
         os.mkdir(f'{file_path}/{name}/results')
+        os.mkdir(f'{file_path}/{name}/results/graphs')
+        os.mkdir(f'{file_path}/{name}/results/graphs/assumptions')
+        os.mkdir(f'{file_path}/{name}/results/graphs/group_differences')
         os.mkdir(f'{file_path}/{name}/work')
         os.mkdir(f'{file_path}/{name}/work/pickle')
         os.mkdir(f'{file_path}/{name}/work/pickle/assumptions')
         os.mkdir(f'{file_path}/{name}/work/pickle/group_differences')
         os.mkdir(f'{file_path}/{name}/work/data')
+        os.mkdir(f'{file_path}/{name}/work/visual_graphs')
 
     except PermissionError:
         print("Do not have the write permissions to create a folder in this directory. Either change file path or the directory's permssions")

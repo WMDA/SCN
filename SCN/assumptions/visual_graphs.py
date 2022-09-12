@@ -1,8 +1,24 @@
 #External modules
+import os
+from decouple import config
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 sns.set_style('dark')
+
+def graph_directory() -> str:
+    '''
+    Function to return abosulte path of graphs working directory.
+
+    Pararmeters
+    ----------
+    None
+
+    Returns
+    -------
+    str: abosulte path of graph working directory
+    '''
+    return os.join.path(config('root'), 'work/graphs')
 
 
 def distro_plots(data:pd.DataFrame, name: str) -> None:
@@ -28,4 +44,6 @@ def distro_plots(data:pd.DataFrame, name: str) -> None:
     sns.histplot(data=data, x='assortativity', color='darkblue', ax=ax[2])
     sns.histplot(data=data, x='modularity',color='red', ax=ax[3])
     sns.histplot(data=data, x='efficiency', ax=ax[4])
-    fig.savefig(f'{name}.png')
+ 
+    directory = graph_directory()
+    fig.savefig(f'{directory}/{name}.png')

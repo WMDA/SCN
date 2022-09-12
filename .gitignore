@@ -1,6 +1,8 @@
 #User defined
 test*.py
 *todo
+*.png
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
