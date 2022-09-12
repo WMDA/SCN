@@ -18,7 +18,7 @@ def graph_directory() -> str:
     -------
     str: abosulte path of graph working directory
     '''
-    return os.join.path(config('root'), 'work/graphs')
+    return os.path.join(config('root'), 'work/visual_graphs')
 
 
 def distro_plots(data:pd.DataFrame, name: str) -> None:
