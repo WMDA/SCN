@@ -45,5 +45,5 @@ def load_pickle(name_of_pickle_object: str) -> object:
         with open(f'{pickle_path}/{name_of_pickle_object}.pickle', 'rb') as handle:
             return pickle.load(handle)
     
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         print(f'Unable to load pickle file {pickle_path}/{name_of_pickle_object} Please check the pickle object exists')
