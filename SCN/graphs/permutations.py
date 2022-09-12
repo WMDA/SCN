@@ -8,6 +8,7 @@ from decouple import config
 
 
 def perm_path():
+    
     '''
     Function to get permuation pickle file location
 
@@ -78,8 +79,8 @@ def random_graph_permutations(thresholded_graph: scn.BrainNetwork, perms: int, n
 
     '''
 
-    pickle_file = f'{name}_{perms}'
-    data_path = perm_path()
+    pickle_file = f'/assumptions/random_graphs_for_{name}_at_{perms}_permutations'
+    data_path = os.path.join(perm_path(), 'assumptions')
     file_exist = check_path(os.path.join(data_path, f'{pickle_file}.pickle'))
 
     if file_exist == False:
