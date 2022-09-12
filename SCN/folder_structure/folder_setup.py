@@ -44,6 +44,8 @@ def folder_creation(file_path: str, name: str = 'SCN') -> None:
         os.mkdir(f'{file_path}/{name}/results')
         os.mkdir(f'{file_path}/{name}/work')
         os.mkdir(f'{file_path}/{name}/work/pickle')
+        os.mkdir(f'{file_path}/{name}/work/pickle/assumptions')
+        os.mkdir(f'{file_path}/{name}/work/pickle/group_differences')
         os.mkdir(f'{file_path}/{name}/work/data')
 
     except PermissionError:
@@ -80,7 +82,7 @@ def update_env(file_path: str, name: str) -> None:
             
             for index, value in enumerate(lines):
                 if 'root' in value:
-                    lines[index] = value.replace(value, f'root={file_path}/{name}')
+                    lines[index] = value.replace(value, f'root={file_path}/{name}\n')
 
             with open(env_file_path, 'w') as file:
                 file.writelines(lines)
