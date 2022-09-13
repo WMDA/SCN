@@ -6,7 +6,6 @@ import seaborn as sns
 sns.set_style('dark')
 
 
-
 def rich_club_plot(brain_bundle, original_network, color=None, show_legend=True, x_max=None, y_max=None) -> None:
 
     '''
