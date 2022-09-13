@@ -1,5 +1,5 @@
 '''
-A script of modified scona functions to accomadate changes in how metrics are calculated. 
+This script will be removed 
 '''
 import pandas as pd
 import numpy as np
