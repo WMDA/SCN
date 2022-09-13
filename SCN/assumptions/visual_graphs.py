@@ -1,4 +1,4 @@
-#External modules
+# External modules
 import os
 from decouple import config
 import matplotlib.pyplot as plt
@@ -24,8 +24,7 @@ def graph_directory() -> str:
     return os.path.join(config('root'), 'work/visual_graphs')
 
 
-def distro_plots(data:pd.DataFrame, name: str) -> None:
-    
+def distro_plots(data: pd.DataFrame, name: str) -> None:
     '''
     Plots the distibution of clustering, 
     shortest_path, assortativity, modularity and efficiency. 
@@ -41,15 +40,18 @@ def distro_plots(data:pd.DataFrame, name: str) -> None:
 
     '''
 
-    fig, ax = plt.subplots(1,5, figsize=(35,8))
-    sns.histplot(data=data, x='average_clustering', color='darkorange', ax=ax[0])
-    sns.histplot(data=data, x='average_shortest_path_length', color='purple', ax=ax[1])
+    fig, ax = plt.subplots(1, 5, figsize=(35, 8))
+    sns.histplot(data=data, x='average_clustering',
+                 color='darkorange', ax=ax[0])
+    sns.histplot(data=data, x='average_shortest_path_length',
+                 color='purple', ax=ax[1])
     sns.histplot(data=data, x='assortativity', color='darkblue', ax=ax[2])
-    sns.histplot(data=data, x='modularity',color='red', ax=ax[3])
+    sns.histplot(data=data, x='modularity', color='red', ax=ax[3])
     sns.histplot(data=data, x='efficiency', ax=ax[4])
- 
+
     directory = graph_directory()
-    fig.savefig(f'{directory}/{name}.png')
+    fig.savefig(f'{directory}/distro_plots_{name}.png')
+
 
 def network_measures_plot(brain_bundle, original_network: str, name: str) -> None:
     """
@@ -59,17 +61,17 @@ def network_measures_plot(brain_bundle, original_network: str, name: str) -> Non
 
     sns.set_context("poster", font_scale=1)
     seaborn_data = df_for_sns_barplot(brain_bundle, original_network)
- 
+
     fig, ax = plt.subplots(figsize=(8, 6))
     ax = sns.barplot(x="measure", y="value", hue="TypeNetwork",
                      data=seaborn_data, palette=['purple', 'slategrey'], ci=95)
 
     ax.axhline(0, linewidth=0.8, color='black')
     ax.set_ylabel("Global network measures")
-    ax.set_xlabel("")  
+    ax.set_xlabel("")
     ax.legend(fontsize="xx-small")
 
     sns.despine()
     plt.tight_layout()
     directory = graph_directory()
-    plt.savefig(f'{directory}/{name}.png')
+    plt.savefig(f'{directory}/network_measures_plot_{name}.png')
