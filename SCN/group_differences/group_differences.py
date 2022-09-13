@@ -78,7 +78,7 @@ class Test_statstic:
         self.global_measures = global_measures
         self.measures = list_of_measures()
 
-    def create_group_dictionary(self):
+    def create_group_dictionary(self) -> dict:
 
         import re
         cleaned_keys = [re.sub(r'_graph_threshold_value_.*', '', key) for key in list(self.global_measures.keys())]
