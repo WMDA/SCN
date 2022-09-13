@@ -11,31 +11,6 @@ sns.set_style('dark')
 #SCN modules
 import functions.statistical_functions as Sfun
 
-def distro_plots(data:pd.DataFrame) -> None:
-    
-    '''
-    Wrapper function around sns.histplots to plot the distibution of clustering, 
-    shortest_path, assortativity, modularity and efficiency. 
-    Plots are 5x1 grid of histplots for clustering, shortest_path, assortativity,
-    modularity and efficiency
-
-    Parameters
-    ----------
-    data: pandas df from the output of report_global_measures() from scona package
-
-    Returns
-    -------
-    None
-
-    '''
-
-    fig, ax = plt.subplots(1,5, figsize=(35,8))
-    sns.histplot(data=data, x='average_clustering', color='darkorange', ax=ax[0])
-    sns.histplot(data=data, x='average_shortest_path_length', color='purple', ax=ax[1])
-    sns.histplot(data=data, x='assortativity', color='darkblue', ax=ax[2])
-    sns.histplot(data=data, x='modularity',color='red', ax=ax[3])
-    sns.histplot(data=data, x='efficiency', ax=ax[4])
-    plt.show()
 
 
 def pval_plotting(ctvalues:list, tcrit_value:int, measure:str, permutations:int) -> None:
