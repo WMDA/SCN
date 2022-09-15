@@ -1,25 +1,10 @@
 # SCN imports
 import SCN.graphs.graphs as graphs
-from SCN.graphs.graph_utlis import save_pickle
+from SCN.graphs.graph_utlis import save_pickle, list_of_measures
 
 # Base python imports
 import multiprocessing
 
-
-def list_of_measures() -> list:
-    '''
-    Function to get list of graph measures
-    TODO add small_world to functionality
-
-    Parameters
-    ----------
-    None
-
-    Returns
-    -------
-    list: list of graph theory measures
-    '''
-    return ['average_clustering', 'average_shortest_path_length', 'assortativity', 'modularity', 'efficiency']
 
 
 class Create_thresholded_graphs:
@@ -137,6 +122,5 @@ class Test_statstic:
             for measure in self.measures:
                 measure_summary = [test_statistics_dictionary[group_key][key] for key in test_statistics_dictionary[group_key] if measure in key]
                 test_statistics_dictionary[group_key][measure] = measure_summary
-        print(test_statistics_dictionary)
         return test_statistics_dictionary
         

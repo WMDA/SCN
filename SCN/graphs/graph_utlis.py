@@ -3,6 +3,21 @@ import os
 from decouple import config
 import pandas as pd
 
+def list_of_measures() -> list:
+    '''
+    Function to get list of graph measures
+    TODO add small_world to functionality
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    list: list of graph theory measures
+    '''
+    return ['average_clustering', 'average_shortest_path_length', 'assortativity', 'modularity', 'efficiency']
+
 
 def save_pickle(name: str, object_to_pickle: object) -> None:
 

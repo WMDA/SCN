@@ -1,10 +1,12 @@
 from SCN.folder_structure.folder_utlis import check_path
-from SCN.graphs.graph_utlis import load_pickle, save_pickle
+from SCN.graphs.graph_utlis import load_pickle, save_pickle, list_of_measures
+import SCN.graphs.graphs as graphs
 
 import os
 import scona as scn
 import pandas as pd
 from decouple import config
+import multiprocessing
 
 
 def perm_path():
@@ -101,3 +103,133 @@ def random_graph_permutations(thresholded_graph: scn.BrainNetwork, perms: int, n
             save_pickle(pickle_file, results)
 
     return results
+
+
+class Group_permutations:
+
+    '''
+    Class to create the null distribution. 
+
+    Usage
+    -----
+    perm_group = perms.Group_permutations(10, range(4,10))
+    perm_group.set_up_data(aan, wr)
+    perm_group.create_null_distribution()
+    null = perm_group.get_null_distribution()
+    perm_group.cleanup()
+    '''
+    
+    def __init__(self, permutation_range: int, threshold_range: int) -> None:
+
+        self.permutation_range = permutation_range
+        self.threshold_range = threshold_range
+        self.root = config('root')
+        self.measures = list_of_measures()
+
+    def set_up_data(self, *data) -> None:
+
+        self.data = dict(zip([f'group_{key}'for key in range(len(data))], [group for group in data]))
+        self.groups = len(self.data.keys())
+
+    def null_distro_dict(self) -> dict:
+        
+        groups = list(self.data.keys())
+        null_distro_list = []
+        for outergroup in groups:
+            for innergroup in groups[::-1]:
+                if outergroup != innergroup:
+                    check_not_in_list = f'{outergroup}/{innergroup}'
+                    if '_'.join(check_not_in_list.split('/')[::-1]) not in null_distro_list:
+                         null_distro_list.append(f'{outergroup}_{innergroup}') 
+        
+
+        return dict(zip([group for group in null_distro_list], [dict() for group in null_distro_list]))
+
+    def permutations(self, keys) -> dict:
+
+        '''
+        Permutations saves the dictionary files to the pickle directory. 
+        '''
+        
+        null_distribution ={
+    
+            'average_clustering':[],
+            'average_shortest_path_length':[], 
+            'assortativity':[], 
+            'modularity':[], 
+            'efficiency':[],
+            'small_world':[]
+        }
+        
+        centroids = graphs.load_centroids()
+        names = graphs.load_names()
+        group1 = self.data[keys[0]]
+        group2 = self.data[keys[1]]
+        participants = pd.concat([group1, group2])
+        
+        print(f'\nCreating null distribution for groups {keys[0]} and {keys[1]} thresholded at {keys[2]}')
+        for perm in range(self.permutation_range):
+            group_1 = participants.sample(n=group1.shape[0])
+            group_2 = participants.sample(n=group2.shape[1])
+    
+            group1_graphs = graphs.create_graphs(group_1, names, centroids, keys[2])
+            group2_graphs = graphs.create_graphs(group_2, names, centroids, keys[2])
+    
+            group_1_values = group1_graphs['graph_threshold'].calculate_global_measures()
+            group_2_values = group2_graphs['graph_threshold'].calculate_global_measures()
+    
+            for meas in self.measures:
+                crit_val = group_1_values[meas] - group_2_values[meas]
+                null_distribution[meas].append(crit_val)
+        
+        
+        save_pickle(f'group_differences/tmp_null_distribution/{keys[0]}_{keys[1]}_thresholded_value_{keys[2]}_null_distribution', null_distribution)
+    
+    def create_null_distribution(self):
+        
+        os.mkdir(f'{self.root}/work/pickle/group_differences/tmp_null_distribution')
+        
+        for threshold in self.threshold_range: 
+
+            if self.groups == 2:
+                null_distribution_values = self.permutations(['group_0', 'group_1', threshold]) 
+            
+            if self.groups == 3:
+                
+                group0_group1_null_distribution_values = multiprocessing.Process(target=self.permutations, args=(['group_0', 'group_1', threshold], ))
+                group0_group2_null_distribution_values = multiprocessing.Process(target=self.permutations, args=(['group_0', 'group_2', threshold], ))
+                group1_group2_null_distribution_values = multiprocessing.Process(target=self.permutations, args=(['group_1', 'group_2', threshold], ))
+              
+                group0_group1_null_distribution_values.start()
+                group0_group2_null_distribution_values.start()
+                group1_group2_null_distribution_values.start()
+
+                group0_group1_null_distribution_values.join()
+                group0_group2_null_distribution_values.join()
+                group1_group2_null_distribution_values.join()
+
+                print('\nExit code for group_0 and group_1 null distribution is ', group0_group1_null_distribution_values.exitcode)
+                print('\nExit code for group_0 and group_2 null distribution is ', group0_group2_null_distribution_values.exitcode)
+                print('\nExit code for group_0 and group_3 null distribution is ', group1_group2_null_distribution_values.exitcode)
+
+    def get_null_distribution(self):
+        
+        import re
+        null_distribution = self.null_distro_dict()
+        files = os.listdir(os.path.join(config('root'), 'work/pickle/group_differences/tmp_null_distribution'))
+        
+        threshold = re.compile(r'group_._group_._|_null_distribution')
+        for file in files:
+            file = re.sub('.pickle', '', file)
+            loaded_file = load_pickle('group_differences/tmp_null_distribution/' + file)
+            group_key = re.sub(r'_thresholded.*','', file)
+            threshold_key = re.sub(threshold, '', file)
+            null_distribution[group_key][threshold_key] = loaded_file
+
+        return null_distribution
+
+    def cleanup(self):
+        
+        import shutil
+        shutil.rmtree(os.path.join(config('root'), 'work/pickle/group_differences/tmp_null_distribution'))
+            

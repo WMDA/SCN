@@ -21,7 +21,7 @@ class Random_Graph_Creator:
     from SCN.assumptions.random_graph_creation import Random_Graph_Creator
 
     graph = Random_Graph_Creator(1000)
-    graph.data(group_one_graph_threshold, group_two_graph_threshold, group_three_graph_threshold)
+    graph.setup_data(group_one_graph_threshold, group_two_graph_threshold, group_three_graph_threshold)
     graph.permutations()
 
     '''
@@ -30,7 +30,7 @@ class Random_Graph_Creator:
         
         self.perms = perms
 
-    def data(self, *data) -> None:
+    def setup_data(self, *data) -> None:
 
         self.data = dict(zip([f'group_{key}'for key in range(len(data))], [group for group in data]))
         self.groups = len(self.data.keys())
