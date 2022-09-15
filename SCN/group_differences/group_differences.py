@@ -4,8 +4,7 @@ from SCN.graphs.graph_utlis import save_pickle, list_of_measures
 
 # Base python imports
 import multiprocessing
-
-
+import numpy as np
 
 class Create_thresholded_graphs:
 
@@ -185,3 +184,36 @@ def maximum_null_stat(null_distribution: dict, threshold_range: int, permutation
                 null_stat_summarized[group_key][measure].append(max_null_statistic['max_null'])
 
     return null_stat_summarized
+
+def critical_value(null_stat_summarized: dict) -> dict:
+
+    '''
+    Function to return the critical value for each measure.
+
+    Parameters
+    ----------
+    null_stat_summarized: dict of summarized null statistics.
+
+    Returns
+    -------
+    crit_val: dict of critical values for each measure
+    '''
+        
+    crit_val = dict(zip([group for group in null_stat_summarized.keys()], [dict() for group in null_stat_summarized.keys()]))
+    measures = list_of_measures()
+
+    for group_key in null_stat_summarized.keys():
+        for measure in measures:
+            if max(null_stat_summarized[group_key][measure]) > 0:
+                if min(null_stat_summarized[group_key][measure]) < 0:
+                    crit_val[group_key][measure] = np.abs(np.quantile(null_stat_summarized[group_key][measure], 0.975))
+               
+                if min(null_stat_summarized[group_key][measure]) > 0:
+                    crit_val[group_key][measure] = np.quantile(null_stat_summarized[group_key][measure], 0.95)
+                    
+            if max(null_stat_summarized[group_key][measure]) <= 0:
+                crit_val[group_key][measure] = np.quantile(null_stat_summarized[group_key][measure], 0.05)
+
+    return crit_val
+
+
