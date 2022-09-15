@@ -123,4 +123,65 @@ class Test_statstic:
                 measure_summary = [test_statistics_dictionary[group_key][key] for key in test_statistics_dictionary[group_key] if measure in key]
                 test_statistics_dictionary[group_key][measure] = measure_summary
         return test_statistics_dictionary
+
+def find_max_null_stat(threshold_value: list, null_distribution: dict, group_key: str, measure_key: str, list_number: int) -> dict:
+    
+    '''
+    Function to loop through each element in a list for each thresold value.
+
+    Parameters
+    ----------
+    null_distribution:dict dictionary of null_distribution
+    group_key:str dictionary key for group 
+    measure_key:str dictionary key for the graph theory measure.
+    list_number:int list index of permutation
+
+    Returns
+    -------
+    max_null_statistic: int max null statistic for that permutation.
+
+    '''
+    
+    values = []
+    for threshold in threshold_value:
+        values.append(null_distribution[group_key][f'thresholded_value_{threshold}'][measure_key][list_number])
         
+    max_null_statistic = max(values, key=abs)
+
+    max_null_dict = {
+        'summarised_values':values,
+        'max_null':max_null_statistic
+    }
+    
+    return max_null_dict
+
+def maximum_null_stat(null_distribution: dict, threshold_range: int, permutation_range: int) -> dict:
+    
+    '''
+    Function to get the maximum null statistic across each permutation across all thresholds.
+
+    Parameters
+    ---------
+    null_distribution: dict of the null distribution
+    threshold_range: int range of values the graph was thresholded at.
+    permutation_range: int the number of permutations (must be a range)
+
+    Returns
+    -------
+    null_stat_summarized: dict of maximum null stats
+    '''
+
+    null_stat_summarized = dict(zip([group for group in null_distribution.keys()], [dict() for group in null_distribution.keys()]))
+    measures = list_of_measures()
+
+    for group_key in null_stat_summarized.keys():
+        for measure in measures:
+            null_stat_summarized[group_key][measure] = []
+
+    for group_key in null_stat_summarized.keys():
+        for perm in permutation_range:
+            for measure in measures:
+                max_null_statistic = find_max_null_stat(threshold_range, null_distribution, group_key, measure, perm )
+                null_stat_summarized[group_key][measure].append(max_null_statistic['max_null'])
+
+    return null_stat_summarized
