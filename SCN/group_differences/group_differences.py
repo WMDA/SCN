@@ -9,6 +9,7 @@ import multiprocessing
 def list_of_measures() -> list:
     '''
     Function to get list of graph measures
+    TODO add small_world to functionality
 
     Parameters
     ----------
@@ -18,7 +19,7 @@ def list_of_measures() -> list:
     -------
     list: list of graph theory measures
     '''
-    return ['average_clustering', 'average_shortest_path_length', 'assortativity', 'modularity', 'efficiency', 'small_world']
+    return ['average_clustering', 'average_shortest_path_length', 'assortativity', 'modularity', 'efficiency']
 
 
 class Create_thresholded_graphs:
@@ -74,6 +75,17 @@ class Create_thresholded_graphs:
 
 
 class Test_statstic:
+
+    '''
+    Class to caluculate test statistics between each group.
+
+    Usage
+    -----
+    stats = Test_statstic(global_measures_dictionary)
+    test_stats = stats.test_statistic(range(4,100))
+
+    '''
+
     def __init__(self, global_measures: dict) -> None:
         self.global_measures = global_measures
         self.measures = list_of_measures()
@@ -83,4 +95,48 @@ class Test_statstic:
         import re
         cleaned_keys = [re.sub(r'_graph_threshold_value_.*', '', key) for key in list(self.global_measures.keys())]
         groups = list(set(cleaned_keys))
-        return dict(zip(groups, [list() for group in groups]))
+        
+        test_stat_list = []
+        for outergroup in groups:
+            for innergroup in groups[::-1]:
+                if outergroup != innergroup:
+                    check_not_in_list = f'{outergroup}/{innergroup}'
+                    if '_'.join(check_not_in_list.split('/')[::-1]) not in test_stat_list:
+                         test_stat_list.append(f'{outergroup}_{innergroup}') 
+        
+
+        return dict(zip([group for group in test_stat_list], [dict() for group in test_stat_list]))
+
+    def test_statistic(self, threshold_values: int) -> dict:
+        
+        '''
+        Calculates test statistics
+        '''
+        test_statistics = self.create_group_dictionary()
+        
+        for threshold in threshold_values:
+            for measure in self.measures:
+                for key in test_statistics:
+                    split = key.split('_')
+                    groups = [split[0] + '_' + split[1], split[2] + '_' + split[3]]
+                    test_stat = self.global_measures[f'{groups[0]}_graph_threshold_value_{threshold}'][measure] - self.global_measures[f'{groups[1]}_graph_threshold_value_{threshold}'][measure]
+                    inner_key = f'{measure}_at_threshold_value_{threshold}'
+                    test_statistics[key][inner_key] = test_stat
+        
+        test_statistics_dictionary = self.summary_stat(test_statistics) 
+        
+        return test_statistics_dictionary
+
+    def summary_stat(self, test_statistics_dictionary) -> dict:
+        
+        '''
+        Creates a list of all values for a measure
+        '''
+
+        for group_key in test_statistics_dictionary.keys():
+            for measure in self.measures:
+                measure_summary = [test_statistics_dictionary[group_key][key] for key in test_statistics_dictionary[group_key] if measure in key]
+                test_statistics_dictionary[group_key][measure] = measure_summary
+        print(test_statistics_dictionary)
+        return test_statistics_dictionary
+        
