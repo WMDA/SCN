@@ -59,11 +59,10 @@ class Create_thresholded_graphs:
 
         return global_measures_dict
 
-
 class Test_statstic:
 
     '''
-    Class to caluculate test statistics between each group.
+    Class to calculate test statistics between each group.
 
     Usage
     -----
