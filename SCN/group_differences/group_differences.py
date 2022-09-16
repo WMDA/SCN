@@ -365,9 +365,7 @@ def null_auc(null_distribution: dict, threshold_value: int, permuatation_range: 
     -------
     null_auc: dict of crticial AUC values for each measure 
     '''
-
-
-
+    
     summarized_permutations = summarize_null_distribution(null_distribution, threshold_value, permuatation_range)
     null_auc_results = dict(zip([group for group in summarized_permutations.keys()], [
                     dict() for group in summarized_permutations.keys()]))
