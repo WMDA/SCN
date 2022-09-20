@@ -33,6 +33,27 @@ def arguments():
 
 
 if __name__ == '__main__':
+    
+    print( 
+    """
+     _---~~(~~-_.
+    _{        )   )
+  ,   ) -~~- ( ,-' )_
+ (  `-,_..`., )-- '_,)
+( ` _)  (  -~( -_ `,  }
+(_-  _  ~_-~~~~`,  ,' )
+  `~ -^(    __;-,((()))
+        ~~~~ {_ -_(())
+               `\  }
+                 { })
+
+    SCN - Structural Covariance pipeline
+    Based on the paper by Drakesmith et al and scona (https://github.com/WhitakerLab/scona)
+    Art by Steven James Walker
+    For queries/problems/Contribute at https://github.com/WMDA/SCN
+
+    """
+    )
     args = arguments()
 
     if args['skip'] == False:
@@ -83,6 +104,11 @@ if __name__ == '__main__':
     time_class = Timer()
     time_class.start()
     print('\nWorking on Assumptions workflow')
-    main_assumptions_work_flow(group_0, group_1, group_2, args['perms'], args['measure'])
-    print('\nAssumptions work flow sucessfully')
-    time_class.stop()
+
+    try:
+        main_assumptions_work_flow(group_0, group_1, group_2, args['perms'], args['measure'])
+        print('\nAssumptions work flow sucessfully completed.')
+        time_class.stop()
+    except KeyboardInterrupt:
+        print('\nUser initiated shutdown. Bye!!')
+        sys.exit(0)
