@@ -1,4 +1,3 @@
-from turtle import title
 from decouple import config
 import os
 

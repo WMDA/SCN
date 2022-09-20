@@ -1,31 +1,5 @@
 import os
 import sys
-import argparse
-import re
-
-
-def set_arguments() -> dict:
-    
-    '''
-    Function to set arguments in case script wants to be run as a standlone
-
-    Parameters
-    ---------
-    None
-
-    Returns
-    -------
-    args:dict of arguments. Run script with -h for further info
-    '''
-
-    option = argparse.ArgumentParser()
-    option.add_argument("-p", "--path", dest='path',
-                        help="filepath to set up directories in")
-    option.add_argument('-n', '--name', dest='name',
-                        help='Name of directory. Default is SCN')
-    args = vars(option.parse_args())
-    return args
-
 
 def folder_creation(file_path: str, name: str = 'SCN') -> None:
 
@@ -123,12 +97,7 @@ def setup(file_path: str, name: str) -> None:
         print('Directory setup exists, skipping...')
 
     except AssertionError:
-        print(file_path, ' does not exist. Setting up directories now')
+        print('\n',file_path + '/' + name, ' does not exist. Setting up directories now')
         folder_creation(file_path, name)
 
     update_env(file_path, name)
-
-if __name__ == '__main__':
-
-    args = set_arguments()
-    setup(args['path'], args['name'])
