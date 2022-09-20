@@ -59,6 +59,7 @@ class Create_thresholded_graphs:
 
         return global_measures_dict
 
+
 class Test_statstic:
 
     '''
@@ -190,6 +191,7 @@ def maximum_null_stat(null_distribution: dict, threshold_range: int, permutation
 
     return null_stat_summarized
 
+
 def critical_value(null_stat_summarized: dict) -> dict:
     '''
     Function to return the critical value for each measure.
@@ -226,7 +228,6 @@ def critical_value(null_stat_summarized: dict) -> dict:
 
 
 def identify_clusters(test_statistics: dict, crit_val: dict, null_stat_summarized: dict) -> dict:
-    
     '''
     Function to find if test statistic is greater than critical value.
 
@@ -240,7 +241,7 @@ def identify_clusters(test_statistics: dict, crit_val: dict, null_stat_summarize
     -------
     clusters: dict of values greater than critical value, the crticial value and the null distirbution
     '''
-    
+
     clusters = {}
 
     for group_key in test_statistics.keys():
@@ -248,7 +249,7 @@ def identify_clusters(test_statistics: dict, crit_val: dict, null_stat_summarize
             new_key = re.sub(r'_at_threshold_value_.*', '', key)
             critical_value = crit_val[group_key][new_key]
             significance = False
-           
+
             if type(val) != list:
                 if critical_value > 0 and val > 0:
                     if val > critical_value:
@@ -271,8 +272,8 @@ def identify_clusters(test_statistics: dict, crit_val: dict, null_stat_summarize
                     }
     return clusters
 
+
 def auc(test_statistics: dict, crit_val: dict, threshold_value: int) -> dict:
-    
     '''
     Function to return area under the curve for test statistics
 
@@ -281,44 +282,47 @@ def auc(test_statistics: dict, crit_val: dict, threshold_value: int) -> dict:
     test_statistics: dict of test_statistic values.
     crit_val: dict of critical values for each measure.
     threshold_value: int a range of threshold values graphs were set to.
-    
+
     Returns
     -------
     auc: dict of auc values.
-    
+
     '''
 
     auc = dict(zip([group for group in test_statistics.keys()], [
-                    dict() for group in test_statistics.keys()]))
-    
-    
+        dict() for group in test_statistics.keys()]))
+
     for group_key in auc.keys():
         for measure in list_of_measures():
-            
-            if all(val >0 for val in test_statistics[group_key][measure]) == False and all(val <0 for val in test_statistics[group_key][measure]) == False:
-                test_statistic_list = np.abs(test_statistics[group_key][measure])
+
+            if all(val > 0 for val in test_statistics[group_key][measure]) == False and all(val < 0 for val in test_statistics[group_key][measure]) == False:
+                test_statistic_list = np.abs(
+                    test_statistics[group_key][measure])
                 critical = np.abs(crit_val[group_key][measure])
-    
+
             else:
-                test_statistic_list = test_statistics[group_key][measure] 
+                test_statistic_list = test_statistics[group_key][measure]
                 critical = crit_val[group_key][measure]
-                
-            threshold_values_linspace = np.linspace(start=min(threshold_value), stop=max(threshold_value), num=500)
-            observation_interploated = np.interp(threshold_values_linspace, threshold_value, test_statistic_list)
+
+            threshold_values_linspace = np.linspace(
+                start=min(threshold_value), stop=max(threshold_value), num=500)
+            observation_interploated = np.interp(
+                threshold_values_linspace, threshold_value, test_statistic_list)
             observation_interploated -= critical
-    
-            if  all(val >0 for val in test_statistics[group_key][measure]) == True:
-                observation_interploated[observation_interploated<0] = 0
+
+            if all(val > 0 for val in test_statistics[group_key][measure]) == True:
+                observation_interploated[observation_interploated < 0] = 0
             else:
-                observation_interploated[observation_interploated>0] = 0
-                
-            obs_AUC = np.trapz(threshold_values_linspace, observation_interploated) 
+                observation_interploated[observation_interploated > 0] = 0
+
+            obs_AUC = np.trapz(threshold_values_linspace,
+                               observation_interploated)
             auc[group_key][measure] = obs_AUC
 
     return auc
 
-def summarize_null_distribution(null_distribution: dict, threshold_value: int, permuatation_range: int) -> dict:
 
+def summarize_null_distribution(null_distribution: dict, threshold_value: int, permuatation_range: int) -> dict:
     '''
     Function to sort null distribution into list for use in the null auc function
 
@@ -335,22 +339,24 @@ def summarize_null_distribution(null_distribution: dict, threshold_value: int, p
     '''
 
     summarized_permutations = dict(zip([group for group in null_distribution.keys()], [
-                    dict() for group in null_distribution.keys()]))
-    
+        dict() for group in null_distribution.keys()]))
+
     for group_key in summarized_permutations.keys():
         for measure in list_of_measures():
             summarized_permutations[group_key][measure] = []
-    
+
     for group_key in summarized_permutations.keys():
         for perm in permuatation_range:
             for measure in list_of_measures():
-                max_null_statistic_values = find_max_null_stat(threshold_value, null_distribution, group_key, measure, perm )
-                summarized_permutations[group_key][measure].append(max_null_statistic_values['summarised_values'])
+                max_null_statistic_values = find_max_null_stat(
+                    threshold_value, null_distribution, group_key, measure, perm)
+                summarized_permutations[group_key][measure].append(
+                    max_null_statistic_values['summarised_values'])
 
     return summarized_permutations
-    
+
+
 def null_auc(null_distribution: dict, threshold_value: int, permuatation_range: int, crit_val: dict) -> dict:
-    
     '''
     Function to find the critical area under the curve from the mean of the super-critical area under the curve for the null distribution
 
@@ -365,40 +371,46 @@ def null_auc(null_distribution: dict, threshold_value: int, permuatation_range: 
     -------
     null_auc: dict of crticial AUC values for each measure 
     '''
-    
-    summarized_permutations = summarize_null_distribution(null_distribution, threshold_value, permuatation_range)
+
+    summarized_permutations = summarize_null_distribution(
+        null_distribution, threshold_value, permuatation_range)
     null_auc_results = dict(zip([group for group in summarized_permutations.keys()], [
-                    dict() for group in summarized_permutations.keys()]))
+        dict() for group in summarized_permutations.keys()]))
 
     for group_key in null_auc_results.keys():
         for measure in list_of_measures():
             null_auc_results[group_key][measure] = []
             for perm in permuatation_range:
-    
-                if all(val > 0 for val in summarized_permutations[group_key][measure][perm]) == False and all(val <0 for val in summarized_permutations[group_key][measure][perm]) == False:
-                    sum_statistic_list = np.abs(summarized_permutations[group_key][measure][perm])
+
+                if all(val > 0 for val in summarized_permutations[group_key][measure][perm]) == False and all(val < 0 for val in summarized_permutations[group_key][measure][perm]) == False:
+                    sum_statistic_list = np.abs(
+                        summarized_permutations[group_key][measure][perm])
                     critical = np.abs(crit_val[group_key][measure])
-    
+
                 else:
-                    sum_statistic_list = summarized_permutations[group_key][measure][perm] 
+                    sum_statistic_list = summarized_permutations[group_key][measure][perm]
                     critical = crit_val[group_key][measure]
-            
-                threshold_values_linspace = np.linspace(start=min(threshold_value), stop=max(threshold_value), num=500)
-                observation_interploated = np.interp(threshold_values_linspace, threshold_value, sum_statistic_list)
+
+                threshold_values_linspace = np.linspace(
+                    start=min(threshold_value), stop=max(threshold_value), num=500)
+                observation_interploated = np.interp(
+                    threshold_values_linspace, threshold_value, sum_statistic_list)
                 observation_interploated -= critical
-                
-                if  all(val >0 for val in summarized_permutations[group_key][measure][perm]) == True:
-                    observation_interploated[observation_interploated<0] = 0
-                    
+
+                if all(val > 0 for val in summarized_permutations[group_key][measure][perm]) == True:
+                    observation_interploated[observation_interploated < 0] = 0
+
                 else:
-                    observation_interploated[observation_interploated>0] = 0
-    
-                obs_AUC = np.trapz(threshold_values_linspace, observation_interploated) 
+                    observation_interploated[observation_interploated > 0] = 0
+
+                obs_AUC = np.trapz(threshold_values_linspace,
+                                   observation_interploated)
                 null_auc_results[group_key][measure].append(obs_AUC)
 
     for group_key in null_auc_results.keys():
         for measure in list_of_measures():
-            mean = sum(null_auc_results[group_key][measure])/len(permuatation_range)
+            mean = sum(null_auc_results[group_key]
+                       [measure])/len(permuatation_range)
             null_auc_results[group_key][measure] = mean
 
     return null_auc_results
