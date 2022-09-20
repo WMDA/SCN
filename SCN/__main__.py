@@ -36,6 +36,7 @@ if __name__ == '__main__':
     
     print( 
     """
+
      _---~~(~~-_.
     _{        )   )
   ,   ) -~~- ( ,-' )_
@@ -47,13 +48,16 @@ if __name__ == '__main__':
                `\  }
                  { })
 
-    SCN - Structural Covariance pipeline
+    SCN - Structural Covariance Network pipeline
     Based on the paper by Drakesmith et al and scona (https://github.com/WhitakerLab/scona)
     Art by Steven James Walker
-    For queries/problems/Contribute at https://github.com/WMDA/SCN
+    For queries/problems/contribute at https://github.com/WMDA/SCN
+    
 
+    
     """
     )
+    print('Starting SCN')
     args = arguments()
 
     if args['skip'] == False:
