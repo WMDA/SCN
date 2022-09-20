@@ -63,7 +63,7 @@ def random_graphs(thresholded_graph: scn.BrainNetwork, perms: int, name: str = '
     }
 
 
-def random_graph_permutations(thresholded_graph: scn.BrainNetwork, perms: int, name: str = 'graph') -> dict:
+def random_graph_permutations(thresholded_graph: scn.BrainNetwork, perms: int,  measure: str, name: str = 'graph') -> dict:
     '''
     Function wrapper around random_graphs function. Will pickle results for later use in work/pickle.
     Will load pickle file if exists. 
@@ -81,7 +81,7 @@ def random_graph_permutations(thresholded_graph: scn.BrainNetwork, perms: int, n
 
     '''
 
-    pickle_file = f'/assumptions/random_graphs_for_{name}_at_{perms}_permutations'
+    pickle_file = f'/assumptions/{measure}_random_graphs_for_{name}_at_{perms}_permutations'
     data_path = os.path.join(perm_path(), 'assumptions')
     file_exist = check_path(os.path.join(data_path, f'{pickle_file}.pickle'))
 

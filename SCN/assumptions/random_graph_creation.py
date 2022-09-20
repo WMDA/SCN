@@ -26,9 +26,10 @@ class Random_Graph_Creator:
 
     '''
 
-    def __init__(self, perms: int) -> None:
+    def __init__(self, perms: int, measure: str) -> None:
         
         self.perms = perms
+        self.measure = measure
 
     def setup_data(self, *data) -> None:
 
@@ -39,7 +40,7 @@ class Random_Graph_Creator:
         
         print(f'\nCreating Random graph for {key}\n')
         graph_threshold = self.data[key]
-        perms.random_graph_permutations(graph_threshold, self.perms, key)
+        perms.random_graph_permutations(graph_threshold, self.perms, self.measure, key)
 
     def permutations(self):
 

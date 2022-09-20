@@ -2,6 +2,7 @@ import pickle
 import os
 from decouple import config
 import pandas as pd
+import time
 
 def list_of_measures() -> list:
     '''
@@ -138,3 +139,49 @@ def df_for_sns_barplot(measures, original_network) -> pd.DataFrame:
                                            ignore_index=True)
 
     return new_df
+
+class TimeError(Exception):
+    """Custom Timer Exception"""
+
+class MeasureError(Exception):
+    """Custom measure exception"""
+
+class Timer:
+
+    '''
+    Custom Class to time how long scripts take to run.
+
+    Usage:
+    
+    from functions.utils import Timer
+
+    timer = Timer()
+    timer.start()
+    <code here>
+    timer.stop()
+    '''
+
+    def __init__(self) -> None:
+        self.__start = None
+
+    def start(self) -> None:
+        
+        if self.__start is not None:
+            raise TimeError("Timer is already started")
+
+        self.__start = time.perf_counter()
+
+    def stop(self) -> None:
+        
+        if self.__start is None:
+            raise TimeError("Timer has not been started. Use .start() to start timer")
+        
+        time_taken = time.perf_counter() - self.__start
+        self.__start = None
+        
+        if time_taken > 60:
+            time_taken = time_taken / 60
+            print(f"Finished in {time_taken} mins")
+
+        else:
+            print(f"Finished in {time_taken} seconds")

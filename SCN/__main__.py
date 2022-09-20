@@ -2,8 +2,9 @@ import argparse
 import os
 import sys
 import pandas as pd
-#from SCN.workflow.assumptions_workflow import main_assumptions_work_flow
+from SCN.workflow.assumptions_workflow import main_assumptions_work_flow
 from SCN.folder_structure.folder_setup import setup
+from SCN.graphs.graph_utlis import Timer
 
 
 def arguments():
@@ -14,13 +15,17 @@ def arguments():
                         help='csv file of participants structural measures. SCN at the moment does not track group names only numbers. SCN also can only handle upto three groups.')
     option.add_argument('-g2', '--group_2', dest='group_2',
                         help='csv file of participants structural measures. SCN at the moment does not track group names only numbers. SCN also can only handle upto three groups.')
-    option.add_argument('-p', '--perms', dest='perms',
+    option.add_argument('-p', '--perms', dest='perms', type=int,
                         help="number of permuations to do")
     option.add_argument("--path", dest='path',
                         help="filepath to set up project in")
     option.add_argument('-n', '--name', dest='name',
                         help="name of project. Default is SCN")
     option.add_argument('-s', '--skip', dest='skip', help="skip folder set up", action='store_true')
+    option.add_argument('-w', '--wdir', dest='wdir',
+                        help='working directory where data is stored')
+    option.add_argument('-m', '--measure', dest='measure',
+                        help='measure that is being examined')
 
     arg = vars(option.parse_args())
 
@@ -47,13 +52,37 @@ if __name__ == '__main__':
         print('\nSkipping directory set up')
 
     print('\nLoading data')
-    
+
+    if args['wdir'] != None:
+        group_0_data = os.path.join(args['wdir'], args['group_0'])
+        group_1_data = os.path.join(args['wdir'], args['group_1'])
+        
+        if args['group_2'] != None:
+            group_2_data = os.path.join(args['wdir'], args['group_2'])
+
+    else:
+        group_0_data = args['group_0']
+        group_1_data = args['group_1']
+
+        if args['group_2'] != None:
+            group_2_data = args['group_2']
+
     try: 
-        group_0 = pd.read_csv(args['group_0'])
-        group_1 = pd.read_csv(args['group_0'])
+        group_0 = pd.read_csv(group_0_data)
+        group_1 = pd.read_csv(group_1_data)
     
         if args['group_2'] != None:
-            group_2 = pd.read_csv(args['group_2'])
+            group_2 = pd.read_csv(group_2_data)
+        
+        else:
+            group_2 = None
+
     except Exception as e:
         print('\nUnable to load in data due to the following reason:\n', e, '\nExiting')
         sys.exit(1)
+    time_class = Timer()
+    time_class.start()
+    print('\nWorking on Assumptions workflow')
+    main_assumptions_work_flow(group_0, group_1, group_2, args['perms'], args['measure'])
+    print('\nAssumptions work flow sucessfully')
+    time_class.stop()
