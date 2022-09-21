@@ -28,7 +28,8 @@ def arguments():
                         help='working directory where data is stored')
     option.add_argument('-m', '--measure', dest='measure',
                         help='measure that is being examined')
-
+    option.add_argument('-G', '--group-only', dest='group-only', action='store_true', help='Run only group differences. Skips assumptions workflow')
+    option.add_argument('-N', '--no-logs', dest='no-logs', action='store_true', help='Does not store output in log files.' )
     arg = vars(option.parse_args())
 
     return arg
@@ -113,28 +114,32 @@ if __name__ == '__main__':
     except Exception as e:
         print('\nUnable to load in data due to the following reason:\n', e, '\nExiting')
         sys.exit(1)
-    
-    log_path = os.path.join(config('root'), 'logs')
-    date_time = datetime.now()
-    log_name = date_time.strftime(f'{args["measure"]}_assumptions_logFile_%S%M_%Y.txt')
-    print(f'\nSetting up log files. Log files being saved to {log_path}')
-    sys.stdout = open(f'{log_path}/{log_name}','w')
 
+    date_time = datetime.now()
+    if args['no-logs'] != True: 
+        log_path = os.path.join(config('root'), 'logs')
+        log_name = date_time.strftime(f'{args["measure"]}_assumptions_logFile_%S%M_%Y.txt')
+        print(f'\nSetting up log files. Log files being saved to {log_path}')
+        sys.stdout = open(f'{log_path}/{log_name}','w')
+    
+    if args['no-logs'] == True:
+        print('\nNo logs option set. No log files created\n')
     # The following code runs the assumptions workflow
-    time_class = Timer()
-    time_class.start()
+
     print(date_time)
     print(f"\nWorking on Assumptions workflow for {args['measure']} with {args['perms']} permutations\n")
     
-
-    try:
-        main_assumptions_work_flow(group_0, group_1, group_2, args['perms'], args['measure'])
-        print('\nAssumptions work flow sucessfully completed with out any errors')
-        time_class.stop()
-        sys.stdout = sys.__stdout__
-        print('SCN Assumptions has completed.')
-
-    except KeyboardInterrupt:
-        sys.stdout = sys.__stdout__
-        print('\nUser initiated shutdown. Bye!!')
-        sys.exit(0)
+    if args['group-only'] != True:    
+        try:
+            time_class = Timer()
+            time_class.start()
+            main_assumptions_work_flow(group_0, group_1, group_2, args['perms'], args['measure'])
+            print('\nAssumptions work flow sucessfully completed with out any errors')
+            time_class.stop()
+            sys.stdout = sys.__stdout__
+            print('SCN Assumptions has completed.')
+    
+        except KeyboardInterrupt:
+            sys.stdout = sys.__stdout__
+            print('\nUser initiated shutdown. Bye!!')
+            sys.exit(0)
