@@ -1,11 +1,13 @@
-import argparse
-import os
-import sys
-import pandas as pd
 from SCN.workflow.assumptions_workflow import main_assumptions_work_flow
 from SCN.folder_structure.folder_setup import setup
 from SCN.graphs.graph_utlis import Timer
 
+import argparse
+import os
+import sys
+import pandas as pd
+from datetime import datetime
+from decouple import config
 
 def arguments():
     option = argparse.ArgumentParser()
@@ -57,9 +59,13 @@ if __name__ == '__main__':
     
     """
     )
-    print('Starting SCN')
-    args = arguments()
 
+    print('Starting SCN.')
+    print('\nChecking and setting up SCN folder structure')
+    
+    args = arguments()
+    
+    # The following code sets the arguments with 
     if args['skip'] == False:
         if args['path'] == None:
             print('\nNo file path given. use --path to set file path for project to be set up in. Exiting')
@@ -75,7 +81,9 @@ if __name__ == '__main__':
 
     if args['skip'] == True:
         print('\nSkipping directory set up')
-
+    
+    
+    # THe following code uses pandas to load csvs
     print('\nLoading data')
 
     if args['wdir'] != None:
@@ -105,14 +113,28 @@ if __name__ == '__main__':
     except Exception as e:
         print('\nUnable to load in data due to the following reason:\n', e, '\nExiting')
         sys.exit(1)
+    
+    log_path = os.path.join(config('root'), 'logs')
+    date_time = datetime.now()
+    log_name = date_time.strftime(f'{args["measure"]}_assumptions_logFile_%S%M_%Y.txt')
+    print(f'\nSetting up log files. Log files being saved to {log_path}')
+    sys.stdout = open(f'{log_path}/{log_name}','w')
+
+    # The following code runs the assumptions workflow
     time_class = Timer()
     time_class.start()
-    print('\nWorking on Assumptions workflow')
+    print(date_time)
+    print(f"\nWorking on Assumptions workflow for {args['measure']} with {args['perms']} permutations\n")
+    
 
     try:
         main_assumptions_work_flow(group_0, group_1, group_2, args['perms'], args['measure'])
-        print('\nAssumptions work flow sucessfully completed.')
+        print('\nAssumptions work flow sucessfully completed with out any errors')
         time_class.stop()
+        sys.stdout = sys.__stdout__
+        print('SCN Assumptions has completed.')
+
     except KeyboardInterrupt:
+        sys.stdout = sys.__stdout__
         print('\nUser initiated shutdown. Bye!!')
         sys.exit(0)

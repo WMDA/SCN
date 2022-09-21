@@ -8,7 +8,24 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-def main_assumptions_work_flow(group_0: pd.DataFrame, group_1: pd.DataFrame,  group_2, perm, measure):
+def main_assumptions_work_flow(group_0: pd.DataFrame, group_1: pd.DataFrame,  group_2, perm: int, measure: str) -> None:
+    
+    '''
+    The main assumptions workflow.
+
+    Parameters
+    ----------
+    group_0: pd.DataFrame of structural measures
+    group_1: pd.Dataframe of structural measures
+    group_2: optional, expects pd.Dataframe of structural measures.
+    perm: int number of permutations
+    measure: str of measure being used.
+
+    Returns
+    -------
+    None
+
+    '''
 
     names = load_names()
     centroids = load_centroids()
