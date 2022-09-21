@@ -9,7 +9,19 @@ import pandas as pd
 from datetime import datetime
 from decouple import config
 
-def arguments():
+def arguments() -> dict:
+
+    '''
+    Function to set arguments
+
+    Parameters
+    ----------
+    None.
+
+    Returns
+    -------
+    arg : dict of args
+    '''
     option = argparse.ArgumentParser()
     option.add_argument('-g0', '--group_0', dest='group_0',
                         help='csv file of participants structural measures. SCN at the moment does not track group names only numbers. SCN also can only handle upto three groups.')
@@ -30,13 +42,33 @@ def arguments():
                         help='measure that is being examined')
     option.add_argument('-G', '--group-only', dest='group-only', action='store_true', help='Run only group differences. Skips assumptions workflow')
     option.add_argument('-N', '--no-logs', dest='no-logs', action='store_true', help='Does not store output in log files.' )
+    option.add_argument('-t', '--threshold', dest='threshold', type=int, default=100,
+                        help="Upper boundary to threshold graphs at. Default is 100.")
     arg = vars(option.parse_args())
 
     return arg
 
+def set_up_logs(logtype: str) -> None:
+
+    '''
+    Function to set up log files.
+
+    Parameters
+    ----------
+    logtype: str of logtype.
+
+    Returns
+    ------
+    None
+    '''
+
+    log_path = os.path.join(config('root'), 'logs')
+    log_name = date_time.strftime(f'{args["measure"]}_{logtype}_logFile_%S%M_%Y.txt')
+    print(f'\nSetting up log files. Log files being saved to {log_path}')
+    sys.stdout = open(f'{log_path}/{log_name}','w')
 
 if __name__ == '__main__':
-    
+
     print( 
     """
 
@@ -65,6 +97,7 @@ if __name__ == '__main__':
     print('\nChecking and setting up SCN folder structure')
     
     args = arguments()
+    print(args)
     
     # The following code sets the arguments with 
     if args['skip'] == False:
@@ -117,15 +150,12 @@ if __name__ == '__main__':
 
     date_time = datetime.now()
     if args['no-logs'] != True: 
-        log_path = os.path.join(config('root'), 'logs')
-        log_name = date_time.strftime(f'{args["measure"]}_assumptions_logFile_%S%M_%Y.txt')
-        print(f'\nSetting up log files. Log files being saved to {log_path}')
-        sys.stdout = open(f'{log_path}/{log_name}','w')
+        set_up_logs('assumptions')
     
     if args['no-logs'] == True:
         print('\nNo logs option set. No log files created\n')
+   
     # The following code runs the assumptions workflow
-
     print(date_time)
     print(f"\nWorking on Assumptions workflow for {args['measure']} with {args['perms']} permutations\n")
     
@@ -143,3 +173,13 @@ if __name__ == '__main__':
             sys.stdout = sys.__stdout__
             print('\nUser initiated shutdown. Bye!!')
             sys.exit(0)
+    sys.stdout = sys.__stdout__
+    
+    if args['group-only'] == True:
+        print('\nGroup only option set. Skipping assumptions workflow')
+    
+    if args['no-logs'] != True: 
+        set_up_logs('group_differences')
+    
+    if args['no-logs'] == True:
+        print('\nNo logs option set. No log files created\n')
