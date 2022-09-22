@@ -8,7 +8,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-def main_assumptions_work_flow(group_0: pd.DataFrame, group_1: pd.DataFrame,  group_2, perm: int, measure: str) -> None:
+def main_assumptions_work_flow(group_0: pd.DataFrame, group_1: pd.DataFrame,  group_2, perm: int, measure: str) -> bool:
     
     '''
     The main assumptions workflow.
@@ -71,3 +71,5 @@ def main_assumptions_work_flow(group_0: pd.DataFrame, group_1: pd.DataFrame,  gr
 
     except Exception:
         print('\nWarnings about loading pickle files for group 2 can safely be ignored.')
+
+    return True

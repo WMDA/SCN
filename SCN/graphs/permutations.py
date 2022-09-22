@@ -113,7 +113,7 @@ class Group_permutations:
     Usage
     -----
     perm_group = perms.Group_permutations(10, range(4,10))
-    perm_group.set_up_data(aan, wr)
+    perm_group.set_up_data(group_0, group_1)
     perm_group.create_null_distribution()
     null = perm_group.get_null_distribution()
     perm_group.cleanup()
@@ -134,6 +134,7 @@ class Group_permutations:
     def null_distro_dict(self) -> dict:
         
         groups = list(self.data.keys())
+        groups.sort()
         null_distro_list = []
         for outergroup in groups:
             for innergroup in groups[::-1]:
@@ -142,7 +143,6 @@ class Group_permutations:
                     if '_'.join(check_not_in_list.split('/')[::-1]) not in null_distro_list:
                          null_distro_list.append(f'{outergroup}_{innergroup}') 
         
-
         return dict(zip([group for group in null_distro_list], [dict() for group in null_distro_list]))
 
     def permutations(self, keys) -> dict:

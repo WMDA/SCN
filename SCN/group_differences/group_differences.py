@@ -80,6 +80,7 @@ class Test_statstic:
         cleaned_keys = [re.sub(r'_graph_threshold_value_.*', '', key)
                         for key in list(self.global_measures.keys())]
         groups = list(set(cleaned_keys))
+        groups.sort()
 
         test_stat_list = []
         for outergroup in groups:
@@ -88,27 +89,27 @@ class Test_statstic:
                     check_not_in_list = f'{outergroup}/{innergroup}'
                     if '_'.join(check_not_in_list.split('/')[::-1]) not in test_stat_list:
                         test_stat_list.append(f'{outergroup}_{innergroup}')
-
+        
         return dict(zip([group for group in test_stat_list], [dict() for group in test_stat_list]))
 
     def test_statistic(self, threshold_values: int) -> dict:
+        
         '''
         Calculates test statistics
         '''
-        test_statistics = self.create_group_dictionary()
-
+        test_statistics_base_dictionary = self.create_group_dictionary()
         for threshold in threshold_values:
             for measure in self.measures:
-                for key in test_statistics:
+                for key in test_statistics_base_dictionary:
                     split = key.split('_')
                     groups = [split[0] + '_' + split[1],
                               split[2] + '_' + split[3]]
                     test_stat = self.global_measures[f'{groups[0]}_graph_threshold_value_{threshold}'][measure] - \
                         self.global_measures[f'{groups[1]}_graph_threshold_value_{threshold}'][measure]
                     inner_key = f'{measure}_at_threshold_value_{threshold}'
-                    test_statistics[key][inner_key] = test_stat
+                    test_statistics_base_dictionary[key][inner_key] = test_stat
 
-        test_statistics_dictionary = self.summary_stat(test_statistics)
+        test_statistics_dictionary = self.summary_stat(test_statistics_base_dictionary)
 
         return test_statistics_dictionary
 
@@ -288,23 +289,25 @@ def auc(test_statistics: dict, crit_val: dict, threshold_value: int) -> dict:
 
     '''
 
-    auc = dict(zip([group for group in test_statistics.keys()], [
+    auc_dict = dict(zip([group for group in test_statistics.keys()], [
         dict() for group in test_statistics.keys()]))
 
-    for group_key in auc.keys():
+    for group_key in auc_dict.keys():
         for measure in list_of_measures():
 
             if all(val > 0 for val in test_statistics[group_key][measure]) == False and all(val < 0 for val in test_statistics[group_key][measure]) == False:
                 test_statistic_list = np.abs(
                     test_statistics[group_key][measure])
                 critical = np.abs(crit_val[group_key][measure])
+                
 
             else:
                 test_statistic_list = test_statistics[group_key][measure]
                 critical = crit_val[group_key][measure]
-
+            
             threshold_values_linspace = np.linspace(
                 start=min(threshold_value), stop=max(threshold_value), num=500)
+            
             observation_interploated = np.interp(
                 threshold_values_linspace, threshold_value, test_statistic_list)
             observation_interploated -= critical
@@ -316,9 +319,10 @@ def auc(test_statistics: dict, crit_val: dict, threshold_value: int) -> dict:
 
             obs_AUC = np.trapz(threshold_values_linspace,
                                observation_interploated)
-            auc[group_key][measure] = obs_AUC
+            
+            auc_dict[group_key][measure] = obs_AUC
 
-    return auc
+    return auc_dict
 
 
 def summarize_null_distribution(null_distribution: dict, threshold_value: int, permuatation_range: int) -> dict:

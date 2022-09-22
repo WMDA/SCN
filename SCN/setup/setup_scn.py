@@ -36,8 +36,8 @@ def arguments() -> dict:
                         help='measure that is being examined')
     option.add_argument('-G', '--group-only', dest='group-only', action='store_true', help='Run only group differences. Skips assumptions workflow')
     option.add_argument('-N', '--no-logs', dest='no-logs', action='store_true', help='Does not store output in log files.' )
-    option.add_argument('-t', '--threshold', dest='threshold', type=int, default=101,
-                        help="Upper boundary to threshold graphs at. Default is set at 100%.")
+    option.add_argument('-t', '--threshold', dest='threshold', type=int, default=100,
+                        help="Upper boundary to threshold graphs at. Default is set at 99%.")
     arg = vars(option.parse_args())
 
     return arg
