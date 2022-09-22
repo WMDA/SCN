@@ -17,7 +17,6 @@ if __name__ == '__main__':
     
     args = arguments()
 
-    
     # The following code sets the arguments with 
     if args['skip'] == False:
         if args['path'] == None:

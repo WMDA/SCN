@@ -50,6 +50,8 @@ def set_up_logs(logtype: str, date_time: object, measure: str) -> None:
     Parameters
     ----------
     logtype: str of logtype.
+    date_time: object a date_time object
+    measure: str of measure
 
     Returns
     ------
@@ -63,6 +65,19 @@ def set_up_logs(logtype: str, date_time: object, measure: str) -> None:
 
 
 def logo() -> str:
+    
+    '''
+    Function to return SCN logo.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    str of logo
+    '''
+    
     return (
     """
 
