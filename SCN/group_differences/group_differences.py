@@ -34,8 +34,7 @@ class Create_thresholded_graphs:
         return dict(zip([f'group_{key}'for key in range(len(data))], [list() for group in data]))
 
     def thresholding_graphs(self, key) -> None:
-        print(
-            f'Creating graphs in the threshold range {self.thresholds} for {key}')
+        print(f'Creating graphs in the threshold range {self.thresholds} for {key}')
 
         for threshold in self.thresholds:
             data = self.data_dic[key]

@@ -1,5 +1,5 @@
 from SCN.workflow.assumptions_workflow import main_assumptions_work_flow
-#from SCN.workflow.group_difference_workflow import main_group_differences_workflow
+from SCN.workflow.group_difference_workflow import main_group_differences_workflow
 from SCN.folder_structure.folder_setup import setup
 from SCN.graphs.graph_utlis import Timer
 from SCN.setup.setup_scn import logo, arguments, set_up_logs
@@ -13,14 +13,14 @@ if __name__ == '__main__':
 
     print(logo())
     print('Starting SCN.')
-    print('\nChecking and setting up SCN folder structure')
+    print('\nChecking and setting up SCN folder structure.')
     
     args = arguments()
 
     # The following code sets the arguments with 
     if args['skip'] == False:
         if args['path'] == None:
-            print('\nNo file path given. use --path to set file path for project to be set up in. Exiting')
+            print('\nNo file path given. use --path to set file path for project to be set up in. Exiting.')
             sys.exit(1)
 
         try:
@@ -28,11 +28,11 @@ if __name__ == '__main__':
             setup(args['path'], args['name'])
             
         except AssertionError as e:
-            print('\nGiven filepath given does not exist. Please provide a real file path\nExiting')
+            print('\nGiven filepath given does not exist. Please provide a real file path\nExiting.')
             sys.exit(1)
 
     if args['skip'] == True:
-        print('\nSkipping directory set up')
+        print('\nSkip argument set. Skipping directory set up.')
     
     
     # THe following code uses pandas to load csvs
@@ -72,13 +72,14 @@ if __name__ == '__main__':
         print(logo())
     
     if args['no-logs'] == True:
-        print('\nNo logs option set. No log files created\n')
+        print('\nNo logs option set. No log files created')
    
     # The following code runs the assumptions workflow
-    print(date_time)
-    print(f"\nWorking on Assumptions workflow for {args['measure']} with {args['perms']} permutations\n")
     
     if args['group-only'] != True:    
+    
+        print(date_time)
+        print(f"\nWorking on assumptions workflow for {args['measure']} with {args['perms']} permutations\n")
         try:
             time_class = Timer()
             time_class.start()
@@ -99,6 +100,19 @@ if __name__ == '__main__':
     
     if args['no-logs'] != True: 
         set_up_logs('group_differences', date_time, args['measure'])
-    
-    if args['no-logs'] == True:
-        print('\nNo logs option set. No log files created\n')
+        
+    try:
+        print(date_time)
+        print(f"\nWorking on group differences workflow for {args['measure']} with {args['perms']} permutations\n")
+        time_class = Timer()
+        time_class.start()
+        main_group_differences_workflow(group_0, group_1, group_2, args['perms'], args['measure'], args['threshold'])
+        print('\nGroup differences work flow sucessfully completed with out any errors')
+        time_class.stop()
+        sys.stdout = sys.__stdout__
+        print('SCN Group differences has completed.')
+
+    except KeyboardInterrupt:
+            sys.stdout = sys.__stdout__
+            print('\nUser initiated shutdown. Bye!!')
+            sys.exit(0)
