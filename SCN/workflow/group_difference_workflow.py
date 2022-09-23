@@ -1,12 +1,16 @@
-from SCN.group_differences.group_differences import Create_thresholded_graphs, Test_statstic, maximum_null_stat, critical_value, identify_clusters
+from SCN.group_differences.group_differences import Create_thresholded_graphs, Test_statstic, maximum_null_stat, critical_value, identify_clusters, auc, null_auc, calculate_significant_auc, summary_of_final_results
 from SCN.graphs.permutations import Group_permutations
 from SCN.graphs.graph_utlis import load_pickle, save_pickle
 from SCN.folder_structure.folder_utlis import check_pickle_file
+from SCN.setup.setup_scn import write_to_file
 
 import pandas as pd
+from terminaltables import AsciiTable
+import sys
 
 
-def main_group_differences_workflow(group_0: pd.DataFrame, group_1: pd.DataFrame, group_2, perm: int, measure: str, threshold: int) -> bool:
+
+def main_group_differences_workflow(group_0: pd.DataFrame, group_1: pd.DataFrame, group_2, perm: int, measure: str, threshold: int, datetime: object) -> bool:
 
     threshold_range = range(4, threshold)
     perm_range = range(0, perm)
@@ -98,5 +102,33 @@ def main_group_differences_workflow(group_0: pd.DataFrame, group_1: pd.DataFrame
         return False
 
     if len(clusters) != 0:
-        print('\nThe following clusters reach are above the threshold:\n')
+        print('\nThe following clusters are above the threshold:\n')
+        print('-'*100)
         print(*clusters.keys(), sep='\n')
+        print('-'*100)
+
+    print('\nCalcuating AUC for the test statistic and the null statistics.')
+    area = auc(test_stats, crit_values, threshold_range)
+    null_area = null_auc(null_distro, threshold_range, perm_range, crit_values)
+
+    print('\nCalculting AUC where AUC for test-statistic is greater than null-statistic')
+    significant_results = calculate_significant_auc(area, null_area)
+    final_results = summary_of_final_results(clusters, significant_results)
+
+    print('\nSummary of results')
+    table = AsciiTable(final_results)
+    print(table.table)
+
+    print('\nWriting results to file.')
+    write_to_file(measure)
+    print(datetime)
+    print(f'\nResults for Analysis for {measure}\n')
+    print(table.table)
+    sys.stdout = sys.__stdout__
+
+
+
+
+    
+    
+

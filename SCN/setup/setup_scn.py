@@ -1,3 +1,4 @@
+import datetime
 import sys
 import os
 import argparse
@@ -101,3 +102,22 @@ def logo() -> str:
     
     """
     )
+
+def write_to_file(measure: str) -> None:
+
+  '''
+  Function to write stdoutput to a file.
+
+  Parameters
+  ----------
+  measure: str of measure to be used in file name
+  
+  Returns
+  -------
+  None
+
+  '''
+   
+  results_path = os.path.join(config('root'), 'results/group_differences')
+  results_file_name = f'results_for_{measure}'
+  sys.stdout = open(f'{results_path}/{results_file_name}','w')

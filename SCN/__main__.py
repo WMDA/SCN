@@ -106,7 +106,7 @@ if __name__ == '__main__':
         print(f"\nWorking on group differences workflow for {args['measure']} with {args['perms']} permutations\n")
         time_class = Timer()
         time_class.start()
-        main_group_differences_workflow(group_0, group_1, group_2, args['perms'], args['measure'], args['threshold'])
+        main_group_differences_workflow(group_0, group_1, group_2, args['perms'], args['measure'], args['threshold'], date_time)
         print('\nGroup differences work flow sucessfully completed with out any errors')
         time_class.stop()
         sys.stdout = sys.__stdout__
