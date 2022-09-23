@@ -3,6 +3,8 @@ from SCN.graphs.permutations import Group_permutations
 from SCN.graphs.graph_utlis import load_pickle, save_pickle
 from SCN.folder_structure.folder_utlis import check_pickle_file
 from SCN.setup.setup_scn import write_to_file
+from SCN.visualization.visual_graphs import cluster_plots
+from SCN.visualization.create_html_view import Group_differences_HTML_file
 
 import pandas as pd
 from terminaltables import AsciiTable
@@ -97,6 +99,12 @@ def main_group_differences_workflow(group_0: pd.DataFrame, group_1: pd.DataFrame
     print('Idenitifying clusters where test-statistic is greater than the critical value.')
     clusters = identify_clusters(test_stats, crit_values, maxi_null_statistic)
     
+    print('\nCreating graphs and saving to html file in results/group_differences')
+    for group in test_stats.keys():
+        cluster_plots(test_stats, crit_values, group, measure)
+
+    Group_differences_HTML_file(test_stats, measure).save_to_file()
+
     if len(clusters) == 0:
         print('No significant clusters found. Exiting')
         return False
@@ -125,10 +133,3 @@ def main_group_differences_workflow(group_0: pd.DataFrame, group_1: pd.DataFrame
     print(f'\nResults for Analysis for {measure}\n')
     print(table.table)
     sys.stdout = sys.__stdout__
-
-
-
-
-    
-    
-

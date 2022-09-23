@@ -10,13 +10,12 @@ import pandas as pd
 from datetime import datetime
 
 if __name__ == '__main__':
+    args = arguments()
 
     print(logo())
     print('Starting SCN.')
     print('\nChecking and setting up SCN folder structure.')
     
-    args = arguments()
-
     # The following code sets the arguments with 
     if args['skip'] == False:
         if args['path'] == None:

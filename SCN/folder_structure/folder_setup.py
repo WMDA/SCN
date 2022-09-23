@@ -22,7 +22,6 @@ def folder_creation(file_path: str, name: str = 'SCN') -> None:
         os.mkdir(f'{file_path}/{name}/work/pickle')
         os.mkdir(f'{file_path}/{name}/work/pickle/assumptions')
         os.mkdir(f'{file_path}/{name}/work/pickle/group_differences')
-        os.mkdir(f'{file_path}/{name}/work/data')
         os.mkdir(f'{file_path}/{name}/work/visual_graphs')
 
     except PermissionError:

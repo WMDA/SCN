@@ -24,7 +24,7 @@ def graph_directory() -> str:
     return os.path.join(config('root'), 'work/visual_graphs')
 
 
-def distro_plots(data: pd.DataFrame, name: str) -> None:
+def distro_plots(data: pd.DataFrame, name: str, structural_measure: str) -> None:
     '''
     Plots the distibution of clustering, 
     shortest_path, assortativity, modularity and efficiency. 
@@ -50,10 +50,10 @@ def distro_plots(data: pd.DataFrame, name: str) -> None:
     sns.histplot(data=data, x='efficiency', ax=ax[4])
 
     directory = graph_directory()
-    fig.savefig(f'{directory}/distro_plots_{name}.png')
+    fig.savefig(f'{directory}/distro_plots_for_{name}_for_{structural_measure}.png')
 
 
-def network_measures_plot(brain_bundle, original_network: str, name: str) -> None:
+def network_measures_plot(brain_bundle, original_network: str, name: str, structural_measure: str) -> None:
     """
     Modified scona function plot_network_measures. See original for full documentation.
     Main difference is it calls df_for_sns_barplot rather than create_df_sns_barplot
@@ -74,9 +74,9 @@ def network_measures_plot(brain_bundle, original_network: str, name: str) -> Non
     sns.despine()
     plt.tight_layout()
     directory = graph_directory()
-    plt.savefig(f'{directory}/network_measures_plot_{name}.png')
+    plt.savefig(f'{directory}/network_measures_plot_for_{name}_for_{structural_measure}.png')
 
-def cluster_plots(test_statistics: dict, crit: dict, group: str ) -> None:
+def cluster_plots(test_statistics: dict, crit: dict, group: str, structural_measure: str ) -> None:
     
     '''
     Function to create a save cluster plots.
@@ -86,6 +86,11 @@ def cluster_plots(test_statistics: dict, crit: dict, group: str ) -> None:
     test_statistics: dict of test_stats
     crit: dict of critical values
     group: str of name of groups.
+    structural_measure : str of structural measure being examined
+
+    Returns
+    -------
+    None
     '''
 
     fig, ax = plt.subplots(1, 5,figsize=(25, 5))
@@ -96,7 +101,7 @@ def cluster_plots(test_statistics: dict, crit: dict, group: str ) -> None:
         graph.set(xlabel='Thresholds',
                   ylabel='Test statistics',
                   title=measure)
-
+  
     directory = graph_directory()
-    plt.savefig(f'{directory}/cluster_plots_for_{group}.png')
+    plt.savefig(f'{directory}/cluster_plots_for_{group}_for_{structural_measure}.png')
     
