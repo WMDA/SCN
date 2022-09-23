@@ -7,7 +7,7 @@ import seaborn as sns
 sns.set_style('dark')
 
 # scn modules
-from SCN.graphs.graph_utlis import df_for_sns_barplot
+from SCN.graphs.graph_utlis import df_for_sns_barplot, list_of_measures
 
 def graph_directory() -> str:
     '''
@@ -75,3 +75,28 @@ def network_measures_plot(brain_bundle, original_network: str, name: str) -> Non
     plt.tight_layout()
     directory = graph_directory()
     plt.savefig(f'{directory}/network_measures_plot_{name}.png')
+
+def cluster_plots(test_statistics: dict, crit: dict, group: str ) -> None:
+    
+    '''
+    Function to create a save cluster plots.
+
+    Parameters
+    ----------
+    test_statistics: dict of test_stats
+    crit: dict of critical values
+    group: str of name of groups.
+    '''
+
+    fig, ax = plt.subplots(1, 5,figsize=(25, 5))
+    for index, measure in enumerate(list_of_measures()):
+        df = pd.DataFrame([list(range(4,101)), test_statistics[group][measure]]).T.rename(columns={0:'threshold', 1:'test_stat'})
+        graph = sns.lineplot(y ='test_stat', x='threshold', data=df.abs(), ax=ax[index])
+        graph.axhline(crit[group][measure])
+        graph.set(xlabel='Thresholds',
+                  ylabel='Test statistics',
+                  title=measure)
+
+    directory = graph_directory()
+    plt.savefig(f'{directory}/cluster_plots_for_{group}.png')
+    

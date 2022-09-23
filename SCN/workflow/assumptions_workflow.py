@@ -1,8 +1,8 @@
 from SCN.graphs.graph_utlis import load_pickle
 from SCN.graphs.graphs import create_graphs, load_names, load_centroids
 from SCN.assumptions.random_graph_creation import Random_Graph_Creator
-from SCN.assumptions.visual_graphs import distro_plots, network_measures_plot
-from SCN.assumptions.create_html_view import HTML_file
+from SCN.visualization.visual_graphs import distro_plots, network_measures_plot
+from SCN.visualization.create_html_view import HTML_file
 import pandas as pd
 import warnings
 warnings.filterwarnings("ignore")
