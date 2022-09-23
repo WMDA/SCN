@@ -417,3 +417,58 @@ def null_auc(null_distribution: dict, threshold_value: int, permuatation_range: 
             null_auc_results[group_key][measure] = mean
 
     return null_auc_results
+
+def calculate_significant_auc(area: dict, null_area: dict) -> dict:
+
+    '''
+    Function to return a dictionary where AUC is greater for test measures than null measures
+
+    Parameters
+    ----------
+    area: dict of AUC values for test statistic
+    null_area: dict of AUC values for null statistics
+    '''
+    
+    significance_result = dict(zip([group for group in area.keys()], [dict() for group in area.keys()]))
+    for group_key in area.keys():
+        for measure in list_of_measures():
+            if np.abs(area[group_key][measure]) > np.abs(null_area[group_key][measure]):
+                significance_result[group_key][measure] = [area[group_key][measure],null_area[group_key][measure]]
+    return significance_result
+
+
+
+def summary_of_final_results(clusters: dict, significance_result: dict) -> list:
+    
+    '''
+    Function to return final results in summarized list to print to terminal
+
+    Parameters
+    ----------
+    clusters: dict of significant clusters
+    significance_result: dict of AUC where test measures greater than null measures
+
+    Results
+    -------
+    final_results: list of final results in format to be printed to terminal using terminaltables.
+
+    '''
+
+    find_measure =re.compile(r'average_clustering|average_shortest_path_length|assortativity|modularity|efficiency')
+    final_results =[]
+    for key in clusters.keys():
+        group_key_cluster = re.findall(r'group_._group_.', key)
+        measure = re.findall(find_measure, key)
+        try: 
+            final_results.append([key, clusters[key]['value'], 
+            clusters[key]['critical_value'],
+            significance_result[group_key_cluster[0]][measure[0]][0], 
+            significance_result[group_key_cluster[0]][measure[0]][1]
+            ])
+        except Exception as e:
+            #print(e)
+            continue
+    
+    final_results.insert(0, ['Measure at threshold', 'Test-statistic', 'Critical value', 'AUC', 'Null AUC'])
+
+    return final_results
