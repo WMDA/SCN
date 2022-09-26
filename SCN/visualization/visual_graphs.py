@@ -93,7 +93,7 @@ def cluster_plots(test_statistics: dict, crit: dict, group: str, structural_meas
     None
     '''
 
-    fig, ax = plt.subplots(1, 5,figsize=(25, 5))
+    fig, ax = plt.subplots(1, 5,figsize=(50, 10))
     for index, measure in enumerate(list_of_measures()):
         df = pd.DataFrame([list(range(4,101)), test_statistics[group][measure]]).T.rename(columns={0:'threshold', 1:'test_stat'})
         graph = sns.lineplot(y ='test_stat', x='threshold', data=df.abs(), ax=ax[index])
@@ -105,3 +105,26 @@ def cluster_plots(test_statistics: dict, crit: dict, group: str, structural_meas
     directory = graph_directory()
     plt.savefig(f'{directory}/cluster_plots_for_{group}_for_{structural_measure}.png')
     
+def global_measure_plots(dataframes: dict, structural_measure: str) -> None:
+
+    '''
+    Function to create graphs of global measures for each group for comparisons
+
+    Parameters
+    ----------
+    dataframes : dict of dataframes
+    structural_measure: str of structural measure
+
+    Returns
+    -------
+    None
+    '''
+
+    plotting_df = pd.concat([dataframes[df] for df in dataframes.keys()]).reset_index(drop=True)
+    fig, ax = plt.subplots(1, 5,figsize=(50, 10))
+    for index, measure in enumerate(list_of_measures()):
+        graph= sns.lineplot(x='threshold', y=measure, hue='group', data=plotting_df, ax=ax[index])
+        graph.set_xticks(range(0,100,10))
+
+    directory = graph_directory()
+    plt.savefig(f'{directory}/global_measure_plots_for_{structural_measure}.png')

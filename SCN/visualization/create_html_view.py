@@ -86,6 +86,10 @@ class Group_differences_HTML_file:
                  <title>Group difference graphs</title>
         </head>
         <body>
+          <h1>Global measure plots for each group</h1>
+          <centre>
+          <img src = "{self.png_dir}/global_measure_plots_for_{self.measure}.png"
+          </centre>
           <h1>Cluster plots</h1>
           <centre>
           {img}

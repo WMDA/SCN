@@ -3,6 +3,7 @@ import os
 from decouple import config
 import pandas as pd
 import time
+import re
 
 def list_of_measures() -> list:
     '''
@@ -185,3 +186,72 @@ class Timer:
 
         else:
             print(f"Finished in {time_taken} seconds")
+
+def create_df_for_global_measures(group_measures: dict, group: str) -> pd.DataFrame:
+
+    '''
+    Function to create dataframes from global measures dictionary for a group.
+
+    Parameters
+    ----------
+    group_measures: dict of group measures
+    group: str of group name 
+
+    Returns
+    -------
+    group_df : pd.DataFrame of gglobal measures for that group.
+    '''
+    for_df = []
+    threshold_values_for_df = []
+    for key in group_measures.keys():
+        if group in key:
+            threshold_value = re.findall(r'\d*?$', key)[0]
+            threshold_values_for_df.append(threshold_value)
+            for_df.append(group_measures[key])
+    
+    df = pd.DataFrame(for_df)
+    threshold = pd.Series(threshold_values_for_df, name='threshold')
+    group_df = pd.concat([threshold, df], axis=1)
+    group_df['group'] = group
+
+    return group_df
+
+
+def create_group_dataframe_dict(group_measures: dict) -> dict:
+
+    '''
+    Function to create a dictionayr of dataframes from all groups
+
+    Parameters
+    ----------
+    global_measures: dict of global measures
+
+    Returns
+    -------
+    dataframes: dict of dataframes
+    '''    
+
+    dataframes = {}
+
+    cleaned_keys = [re.sub(r'_graph_threshold_value_.*', '', key) for key in list(group_measures.keys())]
+    no_of_groups = list(set(cleaned_keys))
+    for group in no_of_groups:
+        dataframes[group] = create_df_for_global_measures(group_measures, group)
+    return dataframes
+
+def save_global_results_to_csv(dataframes: dict, structural_measure: str) -> None:
+    
+    '''
+    Function to save global measures dataframes to csv files 
+
+    Parameters
+    ----------
+    dataframes: dict of dataframes
+
+    Returns
+    ------
+    None
+    '''
+    path_to_save_csvs = os.path.join(config('root'), 'results/group_differences')
+    for group_dataframe in dataframes.keys():
+        dataframes[group_dataframe].to_csv(f'{path_to_save_csvs}/{group_dataframe}_global_measures_for_{structural_measure}.csv')

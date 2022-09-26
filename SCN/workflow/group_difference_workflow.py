@@ -1,16 +1,14 @@
 from SCN.group_differences.group_differences import Create_thresholded_graphs, Test_statstic, maximum_null_stat, critical_value, identify_clusters, auc, null_auc, calculate_significant_auc, summary_of_final_results
 from SCN.graphs.permutations import Group_permutations
-from SCN.graphs.graph_utlis import load_pickle, save_pickle
+from SCN.graphs.graph_utlis import load_pickle, save_pickle, create_group_dataframe_dict, save_global_results_to_csv
 from SCN.folder_structure.folder_utlis import check_pickle_file
 from SCN.setup.setup_scn import write_to_file
-from SCN.visualization.visual_graphs import cluster_plots
+from SCN.visualization.visual_graphs import cluster_plots, global_measure_plots
 from SCN.visualization.create_html_view import Group_differences_HTML_file
 
 import pandas as pd
 from terminaltables import AsciiTable
 import sys
-
-
 
 def main_group_differences_workflow(group_0: pd.DataFrame, group_1: pd.DataFrame, group_2, perm: int, measure: str, threshold: int, datetime: object) -> bool:
 
@@ -37,6 +35,13 @@ def main_group_differences_workflow(group_0: pd.DataFrame, group_1: pd.DataFrame
         print('Existing global measures file found. Loading previous file.')
         group_measures = load_pickle(
             f'/group_differences/group_measures_for_{measure}')
+
+    print('\nSaving csvs of global measures to results/group_differences')
+    dataframes = create_group_dataframe_dict(group_measures)
+    save_global_results_to_csv(dataframes, measure)
+
+    print('Saving graphs of global measures')
+    global_measure_plots(dataframes, measure)
 
     check_test_stats_exist = check_pickle_file(
         f'group_differences/test_stats_for_{measure}.pickle')
