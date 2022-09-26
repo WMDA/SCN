@@ -1,8 +1,8 @@
 # SCN
 
-SCN is a structural covariance network pipeline built in python. Currently a work in progress it uses the scona package as a basis for building the graphs then use the methodology out line by Drakesmith to permutate for group differences. 
+SCN is a structural covariance network pipeline built in python. It uses the scona package as a basis for building the graphs then use the methodology out line by Drakesmith to permutate for group differences in global measures. 
 
-At the current time SCN can't calculate or permuate group differences for nodal measures only global measure. Hopefully in future releases this functionality can be added.
+Current time SCN can't calculate or permuate group differences for nodal measures only global measure. Hopefully in future releases this functionality can be added.
 
 ## Usage
 
@@ -36,6 +36,37 @@ optional arguments:
   -N, --no-logs         Does not store output in log files.
   -t THRESHOLD, --threshold THRESHOLD
                         Upper boundary to threshold graphs at. Default is set at 99.
+```
+
+SCN sets up a folder structure like this:
+
+```
+SCN
+├── logs
+│   └── log files go here
+│   
+├── results
+│   ├── assumptions
+|   |   └── html file for group assumptions go here      
+│   └── group_differences
+│       ├── global measure csvs for each structural measure go here
+│       └── html file for group differences go here 
+└── work
+    ├── pickle
+    │   ├── assumptions
+    │   │   └── random graphs permuation pickle file for each group goes here
+    │   └── group_differences
+    │       ├── pickle file for group_measures
+    │       ├── pickle file maximum null statistics for a structural measure at a set number of permutations
+    │       ├── pickle file for null distribution 
+    │       └── pickle file for test stats 
+    └── visual_graphs
+        ├── png for cluster_plots for each group
+        ├── png for distro plots for each group 
+        ├── png for global_measure plots for
+        └── png for network measures plots for each group
+
+
 ```
 
 ## References
