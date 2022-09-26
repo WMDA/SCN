@@ -69,6 +69,13 @@ SCN
 
 ```
 
+csvs for SCN need to be set up with the column names like this:
+```
+lBSTS	lcACC	lcMFG	lCUN	lENT	lFUS	lIPL	lITG	liCC	lLOG	lLOF	lLING	lMOF	lMTG	lPARH	lparaC	lpOPER	lpORB	lpTRI	lperiCAL	lpostC	lPCC	lpreC	lPCUN	lrACC	lrMFG	lSFG	lSPL	lSTG	lSMAR	lFP	lTP	lTT	lINS	rBSTS	rcACC	rcMFG	rCUN	rENT	rFUS	rIPL	rITG	riCC	rLOG	rLOF	rLING	rMOF	rMTG	rPARH	rparaC	rpOPER	rpORB	rpTRI	rperiCAL	rpostC	rPCC	rpreC	rPCUN	rrACC	rrMFG	rSFG	rSPL	rSTG	rSMAR	rFP	rTP	rTT	rINS
+```
+
+which is the standard freesurfer aparc etc output but just abbreviated names. See the atlas.csv in the SCN/graphs/data folder for more details.
+
 ## References
 
 Drakesmith, M., Caeyenberghs, K., Dutt, A., Lewis, G., David, A., & Jones, D. (2015). Overcoming the effects of false positives and threshold bias in graph theoretical analyses of neuroimaging data. Neuroimage, 118, 313-333. doi: 10.1016/j.neuroimage.2015.05.011
