@@ -16,10 +16,17 @@ def load_atlas_csv() -> pd.DataFrame:
     -------
     atlas.csv pd.Dataframe
     '''
-    path = os.path.join(os.path.dirname(
-        os.path.dirname(os.path.dirname(__file__))), 'SCN/graphs/data')
+    
+    try:
+        path = os.path.join(os.path.dirname(
+            os.path.dirname(os.path.dirname(__file__))), 'SCN/graphs/data')
 
-    return pd.read_csv(f'{path}/atlas.csv')
+        return pd.read_csv(f'{path}/atlas.csv')
+        
+    except Exception:
+        path = os.path.join(os.getcwd(), 'SCN/graphs/data')
+        return pd.read_csv(f'{path}/atlas.csv')
+        
 
 
 def load_centroids() -> np.float64:
