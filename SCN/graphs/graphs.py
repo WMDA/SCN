@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 
+
 def load_atlas_csv() -> pd.DataFrame:
     '''
     Functon to return freesurfer atlas with mni co-ordinates and names
@@ -16,7 +17,8 @@ def load_atlas_csv() -> pd.DataFrame:
     atlas.csv pd.Dataframe
     '''
     path = os.path.join(os.path.dirname(
-        os.path.dirname(os.path.dirname(__file__))), 'data')
+        os.path.dirname(os.path.dirname(__file__))), 'SCN/graphs/data')
+
     return pd.read_csv(f'{path}/atlas.csv')
 
 
