@@ -21,15 +21,24 @@ def load_atlas_csv() -> pd.DataFrame:
     try:
        path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'SCN/graphs/data')
        return pd.read_csv(f'{path}/atlas.csv')
+   
     except Exception:
         
         try:
             path = os.path.join(os.getcwd(), 'SCN/graphs/data')
             return pd.read_csv(f'{path}/atlas.csv')  
-        except Exception as e:
-            print('Unable to load atlas.csv due to:', e)
-            print('This commonly happens with venvs or grid systems. If using a grid system please make sure grid script is in the SCN root directory')
-            sys.exit(1)
+        
+        except Exception:
+            print(f'Unable to find atlas.csv. Looking in {os.getcwd()}')
+            
+            try:
+                path = os.getcwd()
+                return pd.read_csv(f'{path}/atlas.csv')
+            
+            except Exception as e:
+                print('Unable to load atlas.csv due to:', e)
+                print('This commonly happens with venvs or grid systems. Check the where SCN is looking for the atlas.csv and put the file there.')
+                sys.exit(1)
 
 
 def load_centroids() -> np.float64:
