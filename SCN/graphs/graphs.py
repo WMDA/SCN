@@ -17,15 +17,8 @@ def load_atlas_csv() -> pd.DataFrame:
     atlas.csv pd.Dataframe
     '''
     
-    try:
-        path = os.path.join(os.path.dirname(
-            os.path.dirname(os.path.dirname(__file__))), 'SCN/graphs/data')
-
-        return pd.read_csv(f'{path}/atlas.csv')
-        
-    except Exception:
-        path = os.path.join(os.getcwd(), 'SCN/graphs/data')
-        return pd.read_csv(f'{path}/atlas.csv')
+    path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'SCN/graphs/data')
+    return pd.read_csv(f'{path}/atlas.csv')
         
 
 
