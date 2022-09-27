@@ -37,7 +37,7 @@ def load_atlas_csv() -> pd.DataFrame:
             
             except Exception as e:
                 print('Unable to load atlas.csv due to:', e)
-                print('This commonly happens with venvs or grid systems. Check the where SCN is looking for the atlas.csv and put the file there.')
+                print('This commonly happens with venvs or grid systems. Check where SCN is looking for the atlas.csv and put the file there.')
                 sys.exit(1)
 
 
