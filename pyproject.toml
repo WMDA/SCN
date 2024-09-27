@@ -31,4 +31,4 @@ dependencies = [
 requires-python = ">=3.8"
 
 [project.scripts]
-realpython = "SCN.__main__:main"
+scn = "SCN.__main__:main"
